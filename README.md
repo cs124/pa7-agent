@@ -2,7 +2,7 @@
 
 **Late days CANNOT be used on this assignment. Please submit early and often to avoid last minute submission issues!**
 
-**You must work in groups of 3-4 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
+**You should work in groups of 3 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
 
 In this assignment you will build a customer service agent that can help with movie ticket bookings and other movie-related requests.
 The assignment consists of a compulsory part on implementing the collaborative filtering algorithm to recommend movies to the user, and an open-ended part on implementing an LLM agent that can make tool calls, where you are encouraged to be creative and implement interesting functions and tools for the agent to use.
@@ -10,9 +10,10 @@ The assignment consists of a compulsory part on implementing the collaborative f
 
 By the end of the assignment, you will submit: 
 
- - Code files (agent.py)
- - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented (transcript.txt)
- - A brief writeup to list down the different features you implemented, make sure your conversation transcript showcases the use of all the features you implemented
+ - Code file (`agent.py`) for Part 1
+ - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (transcript_part1.txt)
+ - Your implementation for Part 2, preferably in the same file (`agent.py`), but if necessary, you can create a new file for it to break things down and upload all the agent-related files 
+ - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (transcript_part2.txt)
 
  ## Important Setup Note
 
@@ -36,7 +37,9 @@ You can type your message in the prompt to the movie agent, and hit enter. To ex
 
 All the code that you will need to write for this assignment will be in `agent.py`. We will describe the components that you will need to implement in the next sections.
 
-## Assignment Part 1: Collaborative Filtering (25 points)
+## Assignment Part 1: Basic Tool-Use Agent (50 points)
+
+### First Tool: Recommend Movies via Collaborative Filtering (25 points)
 
 One of the core functions that your agent has to support is to recommend movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `binarize`, `similarity`, and `recommend_movies` functions in `agent.py`.
 
@@ -52,9 +55,7 @@ recommend_movies("Peter", 3)
 You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. And we can see that the result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`.
 
 
-## Assignment Part 2: Building a Tool-Using Agent (75 points)
-
-### Integrating Tools into an LLM Agent 
+### Integrating Tools into an LLM Agent (5 points)
 
 Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the dspy library to build our agent to make tool calling easier.
 
@@ -97,7 +98,7 @@ Prediction(
 
 Here we are printing the trajectories including the tool calls and observations. You can see that the agent first recommends 3 movies to the user, and then answers the general question about the plot summary of "Star Wars: Episode VI - Return of the Jedi" by making a tool call to the `general_qa` tool. In your submission, make sure your transcript includes the full trajectories like this too so that we can judge whether your agent made the right tool calls.
 
-### Interfacing with Databases (25 points)
+### Interfacing with Databases (20 points)
 
 An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` and `file_request` tools in `agent.py` and integrate them into your agent.
 
@@ -130,14 +131,30 @@ Printing request_database:
 {'3th6rd': Request(user_request='can you give me a discount on Star Wars: Episode VI - Return of the Jedi?', user_name='')}
 ```
 
-### Real-World Extensions (50 points)
+### Transcript and Submission for Part 1
+
+Once you have finished the above, generate a transcript of the agent's conversation with the user covering the following user questions:
+
+```text
+- My name is Peter, recommend 3 movies to me.
+- recommend 5 movies to Amy please
+- Give me a plot summary for "Lord of the Rings: The Two Towers"
+- Book a ticket for Peter for Lord of the Rings: The Two Towers
+- print ticket_database
+- Can you give me a discount on Lord of the Rings: The Two Towers?
+- print request_database
+```
+
+Apart from the above transcript, you are also encouraged to add additional user questions that can showcase the use of all the tools you implemented. Make sure that you save the full trajectories of the agent's responses as we showed above in your transcript. Save the transcript as `transcript_part1.txt`.
+
+## Assignment Part 2: Real-World Extensions (50 points)
 
 So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario. 
 Your task is to implement functions that could support the following functionalities.
 We will outline how you might go about implementing each function, but you are free to implement them in any way you want.
-We will grade your implementation based on the interaction that your agent has with the user.
+We will grade your implementation based on the interaction transcript that your agent has with the user.
 
-#### Function 1: Web Search (25 points)
+### Function 1: Web Search (25 points)
 
 Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon). 
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
@@ -187,24 +204,224 @@ def extract_text(html: str) -> str:
     return " ".join(text.split())  
 ```
 
-By the end of this process, you should be able to equip your agent with the ability to browse the latest information. You should demonstrate this functionality in your transcript.
+By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025 ".
 
-#### Function 2: Memory (25 points)
+### Function 2: Memory (25 points)
 
-- Memory and personalization: you might notice that the current agent is stateless: it doesn't remember past interactions with the user. Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
-- Account management: support new account creation or information update to existing user accounts, and maintain a database of each user's preferences and history.
+You might notice that the current agent is stateless: it doesn't remember past interactions with the user and you have to explain who you are at every interaction.
+Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
+You can assume that within each interaction, the user is the same person.
 
-#### Bonus: Personalization (10 points)
+There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your Dspy ReAct agent.
+
+We will use a library called [Mem0](https://github.com/mem0ai/mem0). First, install it by running:
+```bash
+pip install mem0ai
+```
+
+You can initialize the memory system by using:
+
+```python
+from mem0 import Memory
+
+# Configure environment
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+
+# Initialize Mem0 memory system
+config = {
+    "llm": {
+        "provider": "openai",
+        "config": {
+            "model": "gpt-4o-mini",
+            "temperature": 0.1
+        }
+    },
+    "embedder": {
+        "provider": "openai",
+        "config": {
+            "model": "text-embedding-3-small"
+        }
+    }
+}
+```
+
+And you can create tools that interact with the memory system by using:
+
+```python
+class MemoryTools:
+    """Tools for interacting with the Mem0 memory system."""
+
+    def __init__(self, memory: Memory):
+        self.memory = memory
+
+    def store_memory(self, content: str, user_id: str = "default_user") -> str:
+        """Store information in memory."""
+        try:
+            self.memory.add(content, user_id=user_id)
+            return f"Stored memory: {content}"
+        except Exception as e:
+            return f"Error storing memory: {str(e)}"
+
+    def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
+        """Search for relevant memories."""
+        try:
+            results = self.memory.search(query, user_id=user_id, limit=limit)
+            if not results:
+                return "No relevant memories found."
+
+            memory_text = "Relevant memories found:\n"
+            for i, result in enumerate(results["results"]):
+                memory_text += f"{i}. {result['memory']}\n"
+            return memory_text
+        except Exception as e:
+            return f"Error searching memories: {str(e)}"
+
+    def get_all_memories(self, user_id: str = "default_user") -> str:
+        """Get all memories for a user."""
+        try:
+            results = self.memory.get_all(user_id=user_id)
+            if not results:
+                return "No memories found for this user."
+
+            memory_text = "All memories for user:\n"
+            for i, result in enumerate(results["results"]):
+                memory_text += f"{i}. {result['memory']}\n"
+            return memory_text
+        except Exception as e:
+            return f"Error retrieving memories: {str(e)}"
+
+    def update_memory(self, memory_id: str, new_content: str) -> str:
+        """Update an existing memory."""
+        try:
+            self.memory.update(memory_id, new_content)
+            return f"Updated memory with new content: {new_content}"
+        except Exception as e:
+            return f"Error updating memory: {str(e)}"
+
+    def delete_memory(self, memory_id: str) -> str:
+        """Delete a specific memory."""
+        try:
+            self.memory.delete(memory_id)
+            return "Memory deleted successfully."
+        except Exception as e:
+            return f"Error deleting memory: {str(e)}"
+```
+
+And you can integrate it with our Dspy ReAct agent by using:
+
+```python
+class MemoryQA(dspy.Signature):
+    """
+    You're a helpful assistant and have access to memory method.
+    Whenever you answer a user's input, remember to store the information in memory
+    so that you can use it later.
+    """
+    user_input: str = dspy.InputField()
+    response: str = dspy.OutputField()
+
+class MemoryReActAgent(dspy.Module):
+    """A ReAct agent enhanced with Mem0 memory capabilities."""
+
+    def __init__(self, memory: Memory):
+        super().__init__()
+        self.memory_tools = MemoryTools(memory)
+
+        # Create tools list for ReAct
+        self.tools = [
+            self.memory_tools.store_memory,
+            self.memory_tools.search_memories,
+            self.memory_tools.get_all_memories,
+            self.get_preferences,
+            self.update_preferences,
+        ]
+
+        # Initialize ReAct with our tools
+        self.react = dspy.ReAct(
+            signature=MemoryQA,
+            tools=self.tools,
+            max_iters=6
+        )
+
+    def forward(self, user_input: str):
+        """Process user input with memory-aware reasoning."""
+
+        return self.react(user_input=user_input)
 
 
-## Transcript and Submission
+    def get_preferences(self, category: str = "general", user_id: str = "default_user") -> str:
+        """Get user preferences for a specific category."""
+        query = f"user preferences {category}"
+        return self.memory_tools.search_memories(
+            query=query,
+            user_id=user_id
+        )
+
+    def update_preferences(self, category: str, preference: str, user_id: str = "default_user") -> str:
+        """Update user preferences."""
+        preference_text = f"User preference for {category}: {preference}"
+        return self.memory_tools.store_memory(
+            preference_text,
+            user_id=user_id
+        )
+```
+
+As a minimal demo of how this memory-augmented agent works, try running the following example:
+
+```python
+import time
+def run_memory_agent_demo():
+    """Demonstration of memory-enhanced ReAct agent."""
+
+    # Configure DSPy
+    lm = dspy.LM(model='openai/gpt-4o-mini')
+    dspy.configure(lm=lm)
+
+    # Initialize memory system
+    memory = Memory.from_config(config)
+
+    # Create our agent
+    agent = MemoryReActAgent(memory)
+
+    # Sample conversation demonstrating memory capabilities
+    print("🧠 Memory-Enhanced ReAct Agent Demo")
+    print("=" * 50)
+
+    conversations = [
+        "Hi, I'm Alice and I love sci-fi movies.",
+        "I'm Alice. My favorite movie is "The Matrix".",
+        "I'm Alice. What do you remember about my preferred movie genre?",
+        "I'm Alice. What is my favorite movie?",
+    ]
+
+    for i, user_input in enumerate(conversations, 1):
+        print(f"\n📝 User: {user_input}")
+
+        try:
+            response = agent(user_input=user_input)
+            print(f"🤖 Agent: {response.response}")
+            time.sleep(1)
+
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
+# Run the demonstration
+if __name__ == "__main__":
+    run_memory_agent_demo()
+```
+
+
+
+### Transcript and Submission for Assignment Part 2
+
+Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
 Submit your assignment via Gradescope. We expect the following files in your final submission:
 
     agent.py
     api_keys.py
-    transcript.txt
-    writeup.pdf
+    transcript_part1.txt
+    transcript_part2.txt
+    * any auxiliary code files you created for Part 2
     
 **We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.**  If you would like to work out an alternative accomodation please make a private Ed post.
 
