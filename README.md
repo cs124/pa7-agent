@@ -409,6 +409,8 @@ if __name__ == "__main__":
     run_memory_agent_demo()
 ```
 
+This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/. 
+After running through this demo, make sure to also integrate all the movie-related tools and the web-search tools from previous parts into your memory-augmented agent to make it fully functional.
 
 
 ### Transcript and Submission for Assignment Part 2
