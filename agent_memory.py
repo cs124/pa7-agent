@@ -7,29 +7,29 @@ from mem0 import Memory
 import os
 from typing import List, Dict, Any, Optional
 from datetime import datetime
-from api_keys import OPENAI_API_KEY
+from api_keys import TOGETHER_API_KEY
 import datetime
 import time
 
 # Configure environment
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
-# Initialize Mem0 memory system
 config = {
     "llm": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "gpt-4o-mini",
+            "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
             "temperature": 0.1
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "text-embedding-3-small"
+            "model": "togethercomputer/m2-bert-80M-8k-retrieval"
         }
     }
 }
+
 
 class MemoryTools:
     """Tools for interacting with the Mem0 memory system."""
@@ -38,22 +38,48 @@ class MemoryTools:
         self.memory = memory
 
     def store_memory(self, content: str, user_id: str = "default_user") -> str:
-        """Store information in memory."""
+         """
+        Store a piece of information in memory.
+
+        This is typically called when the agent learns something that should
+        persist across turns (e.g., user preferences, reminders, personal facts).
+
+        Args:
+            content (str): The text to store in memory.
+            user_id (str): Identifier for the user whose memory this belongs to.
+
+        Returns:
+            str: A confirmation message or an error message.
+        """
         try:
-            self.memory.add(content, user_id=user_id)
+            self.memory.add(content, user_id=user_id) # Add the content to Mem0's memory store.
             return f"Stored memory: {content}"
         except Exception as e:
             return f"Error storing memory: {str(e)}"
 
     def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
-        """Search for relevant memories."""
+        """
+        Search memory for items relevant to a query.
+
+        This is used when the agent needs to recall previously stored information,
+        such as user preferences or earlier statements.
+
+        Args:
+            query (str): Natural-language search query.
+            user_id (str): Identifier for the user whose memory should be searched.
+            limit (int): Maximum number of memories to return.
+
+        Returns:
+            str: A formatted list of relevant memories or a message indicating
+            that nothing was found.
+        """
         try:
             # TODO: search for relevant memories; for your reference, it would be helpful to read the documentation of 
             # mem0 to see how to use the search method: https://github.com/mem0ai/mem0
             results = #TODO
             if not results:
                 return "No relevant memories found."
-
+            # Format the retrieved memories into a readable text block
             memory_text = "Relevant memories found:\n"
             for i, result in enumerate(results["results"]):
                 memory_text += f"{i}. {result['memory']}\n"
@@ -64,7 +90,7 @@ class MemoryTools:
     def get_all_memories(self, user_id: str = "default_user") -> str:
         """Get all memories for a user."""
         try:
-            results = self.memory.get_all(user_id=user_id)
+            results = self.memory.get_all(user_id=user_id)   # Fetch all memories associated with the given user
             if not results:
                 return "No memories found for this user."
 
@@ -78,7 +104,7 @@ class MemoryTools:
     def update_memory(self, memory_id: str, new_content: str) -> str:
         """Update an existing memory."""
         try:
-            self.memory.update(memory_id, new_content)
+            self.memory.update(memory_id, new_content)    # Replace the old memory content with the new content
             return f"Updated memory with new content: {new_content}"
         except Exception as e:
             return f"Error updating memory: {str(e)}"
@@ -132,7 +158,7 @@ class MemoryReActAgent(dspy.Module):
         return self.memory_tools.store_memory(
             f"REMINDER: {reminder}", 
             user_id=user_id
-        )
+        ) # Store the reminder as a memory entry.
 
     def get_preferences(self, category: str = "general", user_id: str = "default_user") -> str:
         """Get user preferences for a specific category."""
@@ -140,7 +166,7 @@ class MemoryReActAgent(dspy.Module):
         return self.memory_tools.search_memories(
             query=query,
             user_id=user_id
-        )
+        )  # Search memory for entries related to this category
 
     def update_preferences(self, category: str, preference: str, user_id: str = "default_user") -> str:
         """Update user preferences."""
@@ -148,13 +174,13 @@ class MemoryReActAgent(dspy.Module):
         return self.memory_tools.store_memory(
             preference_text,
             user_id=user_id
-        )
+        )  # Store the preference in memory so it can be retrieved later
 
 def run_memory_agent_demo():
     """Demonstration of memory-enhanced ReAct agent."""
 
     # Configure DSPy
-    lm = dspy.LM(model='openai/gpt-4o-mini')
+    lm = dspy.LM(model='together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1')
     dspy.configure(lm=lm)
 
     # Initialize memory system

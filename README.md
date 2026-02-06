@@ -245,6 +245,12 @@ We will use a library called [Mem0](https://github.com/mem0ai/mem0). First, inst
 pip install mem0ai
 ```
 
+Before you run the script, please also make sure that you have together installed as we will be accessing LLMs through the Together AI API:
+
+```bash
+pip install together
+```
+
 You can initialize the memory system by using:
 
 ```python
