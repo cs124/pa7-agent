@@ -2,7 +2,7 @@
 
 **Late days CANNOT be used on this assignment. Please submit early and often to avoid last minute submission issues!**
 
-**You should work in groups of 3 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
+**You should work in groups of 3-4 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
 
 In this assignment you will build a customer service agent that can help with movie ticket bookings and other movie-related requests.
 The assignment consists of a compulsory part on implementing the collaborative filtering algorithm to recommend movies to the user, and an open-ended part on implementing an LLM agent that can make tool calls, where you are encouraged to be creative and implement interesting functions and tools for the agent to use.
@@ -348,3 +348,4 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2
 
 **We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.** If you would like to work out an alternative accomodation please make a private Ed post.
+
