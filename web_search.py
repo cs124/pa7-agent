@@ -4,23 +4,46 @@ from typing import Optional
 from serpapi import GoogleSearch
 from bs4 import BeautifulSoup
 import dspy
-from api_keys import OPENAI_API_KEY
+from api_keys import TOGETHER_API_KEY, SERPAPI_API_KEY
 import time
 
-os.environ["SERPAPI_API_KEY"] = ""   # put your key here
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["SERPAPI_API_KEY"] =  SERPAPI_API_KEY
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
 
 def extract_text(html: str) -> str:
-    soup = BeautifulSoup(html, "html.parser")
-    for tag in soup(["script", "style", "noscript"]):
+    """
+    Extracts clean, readable text from raw HTML.
+
+    This function takes an HTML page (returned from a web request) and removes
+    non-readable content. 
+
+    Args:
+        html (str): Raw HTML content of a web page.
+
+    Returns:
+        str: Cleaned plain-text version of the page content.
+    """
+    soup = BeautifulSoup(html, "html.parser")   # Parse the raw HTML into a structured BeautifulSoup object
+    for tag in soup(["script", "style", "noscript"]): # Remove tags that do not contain meaningful visible text
         tag.decompose()
-    text = soup.get_text(separator=" ", strip=True)
+    text = soup.get_text(separator=" ", strip=True)  # Extract all remaining visible text from the HTML
     return " ".join(text.split())
 
 
 class WebTools:
-    """Tools for web search + reading pages."""
+    """
+    Utility class that provides web search and page-reading tools for the agent.
+
+    This class acts as a thin wrapper around a web search API (SerpAPI).
+    The agent calls these methods when it needs *external information*
+    that is not available in its prompt or memory.
+
+    Conceptually:
+    - The LLM decides *when* to search
+    - This class handles *how* the search is executed
+    - The returned text is formatted to be readable by both humans and LLMs
+    """
 
     def __init__(self, serpapi_key: Optional[str] = None):
         self.serpapi_key = serpapi_key or os.getenv("SERPAPI_API_KEY")
@@ -41,7 +64,8 @@ class WebTools:
         # Bing via SerpAPI. Pagination is controlled by 'first' for bing.
         # page=1 => first=0, page=2 => first=num_results, etc.
         first = (max(page, 1) - 1) * num_results
-
+        # Parameters passed to the SerpAPI search endpoint.
+        # We use Bing here, but SerpAPI supports multiple search engines.
         params = {
             "engine": "bing",
             "q": query,
@@ -51,16 +75,17 @@ class WebTools:
         }
 
         try:
-            results = GoogleSearch(params).get_dict()
+            results = GoogleSearch(params).get_dict()  # Execute the search request and parse the JSON response
             organic = results.get("organic_results", []) or []
             if not organic:
                 return "No results found."
-
+            # Build a human- and LLM-readable summary of the results
             lines = [f"Web search results for: {query} (page {page})"]
             for i, item in enumerate(organic[:num_results], 1):
                 title = item.get("title") or "(no title)"
                 link = item.get("link") or "(no link)"
                 snippet = item.get("snippet") or ""
+                # Each result is formatted as a numbered block
                 lines.append(f"{i}. {title}\n   {link}\n   {snippet}".strip())
 
             return "\n".join(lines)
@@ -70,11 +95,10 @@ class WebTools:
 
 class WebSearchQA(dspy.Signature):
     """
-    You're a helpful assistant and have access to web_search(query, num_results, page).
-    Whenever you answer a user's input that requires updated information, remember to perform web search
+    [TODO]: define the objective of the web search agent.
     """
-    user_input: str = dspy.InputField()
-    response: str = dspy.OutputField()
+    user_input: str = #TODO
+    response: str = #TODO
 
 class WebSearchAgent(dspy.Module):
     """A ReAct agent enhanced with web search capabilities."""
@@ -104,7 +128,7 @@ def run_web_search_agent_demo():
     """Demonstration of web search ReAct agent."""
 
     # Configure DSPy
-    lm = dspy.LM(model='openai/gpt-4o-mini')
+    lm = dspy.LM(model='together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1')
     dspy.configure(lm=lm)
 
     # Create our agent

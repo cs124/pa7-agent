@@ -162,7 +162,21 @@ We will grade your implementation based on the interaction transcript that your 
 Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
-There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE). Once you get an API key, you can use something like this to call the web search tool:
+First, in the cs124 conda environment, you will need to install the following:
+
+```python
+pip install google-search-results
+```
+
+There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard here (https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to "api_keys.py", and replace "" with your own SERPAPI key.
+
+```python
+SERPAPI_API_KEY = ""
+os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
+```
+
+Once you have an API key, you can use something like this to call the web search tool:
 
 ```python
 from serpapi import GoogleSearch
@@ -209,10 +223,11 @@ By reading the content of the searched results, the agent should be able to give
 
 You will complete and run code in web_search.py for this part of the assignment. We provide most of the implementation, including the WebTools class, which enables the search functionality using the code described above. WebTools will be used in the WebSearchAgent class. Before you run the script, please remember to set the SERPAPI_API_KEY value to your api key. You will finish implementing the following three components:
 
-1. First, you will define self.web_tools (one line)
-2. Next, you will define self.tools (one line)
-3. Finally, you will finish writing the forward function
-4. Lastly, you will write 5 more prompts that can test the agent's web search ability.
+1. Complete the WebSearchQA class by defining the objective of the agent and defining the input and response (hint: it might be helpful to reference the MovieTicketAgent class from agent.py)
+2. Next, you will define self.web_tools (one line)
+3. Next, you will define self.tools (one line)
+4. Finally, you will finish writing the forward function
+5. Lastly, you will write 5 more prompts that can test the agent's web search ability.
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information.
 
