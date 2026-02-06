@@ -3,12 +3,12 @@ import random
 import string
 import dspy
 import os
-from api_keys import OPENAI_API_KEY
+from api_keys import TOGETHER_API_KEY
 import util
 import numpy as np
 from synthetic_users import SYNTHETIC_USERS
 
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
 ## load ratings matrix and convert user ratings to binary
 titles, ratings_matrix = util.load_ratings('data/ratings.txt')
@@ -137,7 +137,7 @@ def recommend_movies(user_name: str, k=3):
 
 def general_qa(user_request: str):
     """Answer a general question about the airline by making an LLM call."""
-    lm = dspy.LM("openai/gpt-4o-mini")
+    lm = dspy.LM("together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1")
     dspy.configure(lm=lm)
 
     response = lm(messages=[{"role": "user", "content": user_request}])
@@ -166,7 +166,7 @@ class MovieTicketAgent(dspy.Signature):
         desc="Message that summarizes the process result, and the information users need, e.g., the ticket number if a new ticket is booked."
     )
 
-dspy.configure(lm=dspy.LM("openai/gpt-4o-mini"))
+dspy.configure(lm=dspy.LM("together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1"))
 react_agent = dspy.ReAct(
     MovieTicketAgent,
     tools = [
