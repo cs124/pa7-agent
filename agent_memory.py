@@ -25,7 +25,13 @@ config = {
     "embedder": {
         "provider": "together",
         "config": {
-            "model": "togethercomputer/m2-bert-80M-8k-retrieval"
+            "model": "Alibaba-NLP/gte-modernbert-base"
+        }
+    },
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+      "embedding_model_dims": 768
         }
     }
 }
@@ -120,6 +126,7 @@ class MemoryTools:
 def get_current_time() -> str:
     """Get the current date and time."""
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 class MemoryQA(dspy.Signature):
     """
