@@ -331,21 +331,25 @@ if __name__ == "__main__":
 
 This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
-### Final integration
-
-Now that we've implemented both web_search.py and agent_memory.py, your final job is to piece them together into one agent that can perform web search as well as search memories. To do so, you can migrate the functionalities from web_search.py to the MemoryReActAgent.
-
 ### Transcript and Submission for Assignment Part 2
 
 Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
+
+### EXTRA CREDIT QUESTION: Final integration
+
+There are two ways you can receive extra credits for this assignment:
+
+1. Come up with an additional feature besides web search and memory and use dspy to show case the additional feature. Feel free to be creative! We've provided a starter file "extra_credit1.py" for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
+2. Integrating web search and memory back into the movie agent: Now that we've implemented both web_search.py and agent_memory.py, you could piece these features back into the movie agent to perform web search as well as search memories. To do so, you can migrate the functionalities from web_search.py to the MemoryReActAgent. We've provided a started file "extra_credit2.py" for you to get started. Your job is to move existing functions from the three agents you implemented here and integrating them into one single agent by unifying the tools. Like before, you will submit a transcript to demonstrate that the agent has all three features (i.e. can book tickets, has memory, and can do web search)!
 
 Submit your assignment via Gradescope. We expect the following files in your final submission:
 
     agent.py
     api_keys.py
-    transcript_part1.txt
-    transcript_part2.txt
+    web_search.py
+    agent_memory.py
+    transcript_part1.txt (you will need to create this text file)
+    transcript_part2.txt (you will need to create this text file)
     * any auxiliary code files you created for Part 2
 
 **We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.** If you would like to work out an alternative accomodation please make a private Ed post.
-
