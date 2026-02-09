@@ -85,32 +85,52 @@ def _generate_id(length=8):
     return "".join(random.choices(chars, k=length))
 
 def binarize(ratings, threshold=2.5):
-    """Return a binarized version of the given matrix.
+    """
+    Return a binarized version of the given matrix.
     To binarize a matrix, replace all entries above the threshold with 1.
     and replace all entries at or below the threshold with a -1.
     Entries whose values are 0 represent null values and should remain at 0.
+
     :param ratings: a (num_movies x num_users) matrix of user ratings, from 0.5 to 5.0
     :param threshold: Numerical rating above which ratings are considered positive
     :returns: a binarized version of the movie-rating matrix
     """
     
-    # TODO: Binarize the movie ratings matrix.                             #
-    
+    ########################################################################
+    # TODO: Binarize the supplied ratings matrix.                          #
+    #                                                                      #
+    # WARNING: Do not use self.ratings directly in this function.          #
+    ########################################################################
+
+    # The starter code returns a new matrix shaped like ratings but full of
+    # zeros.
+    binarized_ratings = np.zeros_like(ratings)
+
+    ########################################################################
+    #                        END OF YOUR CODE                              #
+    ########################################################################
     return binarized_ratings
 
 def similarity(u, v):
-    """Calculate the cosine similarity between two vectors.
+    """
+    Calculate the cosine similarity between two vectors.
     You may assume that the two arguments have the same shape.
     :param u: one vector, as a 1D numpy array
     :param v: another vector, as a 1D numpy array
     :returns: the cosine similarity between the two vectors
     """
+    ########################################################################
     # TODO: Compute cosine similarity between the two vectors.             #
-
+    ########################################################################
+    similarity = 0
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
     return similarity
 
 def recommend_movies(user_name: str, k=3):
-    """Generate a list of indices of movies to recommend using collaborative
+    """
+    Generate a list of indices of movies to recommend using collaborative
         filtering.
 
     You should return a collection of `k` indices of movies recommendations.
@@ -126,17 +146,24 @@ def recommend_movies(user_name: str, k=3):
     user_name = user_profile.name
     user_ratings = user_ratings_dict[user_name]
 
+    ########################################################################
+    # TODO: Implement collaborative filtering to generate a list of movie indices to recommend to the user.
+    ########################################################################
     # Populate this list with k movie indices to recommend to the user.
     recommendations = []
-
-    # TODO: Implement collaborative filtering to generate a list of movie indices to recommend to the user.
+    
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
 
     ## convert the movie indices to movie titles
     result_titles = [titles[movie_index] for movie_index in recommendations]
     return result_titles
 
 def general_qa(user_request: str):
-    """Answer a general question about the airline by making an LLM call."""
+    """
+    Answer a general question about the airline by making an LLM call.
+    """
     lm = dspy.LM("together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1")
     dspy.configure(lm=lm)
 
@@ -144,22 +171,36 @@ def general_qa(user_request: str):
     return response
 
 def book_ticket(user_name: str, movie_title: str):
-    """Book a ticket for the given user and movie title. Tile must be one of: [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, Star Wars: Episode IV - A New Hope, Titanic]"""
+    """
+    Book a ticket for the given user and movie title. Tile must be one of: 
+    [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, 
+    Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, 
+    Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, 
+    Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, 
+    Star Wars: Episode IV - A New Hope, Titanic]
+    """
    
-   ## TODO: Implement the book_ticket tool
+    ########################################################################
+    ## TODO: Implement the book_ticket tool                                #
+    ########################################################################
 
-    return f"Ticket booked successfully for {user_profile.name} for the movie {movie_title}. The ticket number is {ticket_number}. Your new balance is {user_profile.balance}."
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
+    return f"Ticket booked successfully for {user_name} for the movie {movie_title}. The ticket number is {ticket_number}. Your new balance is {user_profile.balance}."
 
 
 ## TODO: implement other tools for your agent
 
-## defining the agent
+## Integrating tools into an LLM agent
 
 class MovieTicketAgent(dspy.Signature):
-    """You are a movie ticket agent that helps user book and manage movie tickets.
+    """
+    You are a movie ticket agent that helps user book and manage movie tickets.
 
-    You are given a list of tools to handle user request, and you should decide the right tool to use in order to
-    fulfill users' request."""
+    You are given a list of tools to handle user request, and you should 
+    decide the right tool to use in order to fulfill users' request.
+    """
     
     user_request: str = dspy.InputField()
     process_result: str = dspy.OutputField(
