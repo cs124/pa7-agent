@@ -95,8 +95,12 @@ class WebTools:
 
 class WebSearchQA(dspy.Signature):
     ########################################################################
-    # TODO: define the objective of the web search agent
+    # TODO: define the objective of the web search agent, the user input and response                                                         #
+    # Hint: it might be helpful to reference the `MovieTicketAgent` class from `agent.py`
     ########################################################################
+    """
+    TODO: Replace this line with the agent objective
+    """
     user_input: str = ""
     response: str = ""
     ########################################################################
@@ -110,6 +114,7 @@ class WebSearchAgent(dspy.Module):
         super().__init__()
         ########################################################################
         # TODO: define self.web_tools and self.tools (uncomment and complete the lines below)
+        # Hint: read through how tools are defined in `agent.py`
         ########################################################################
         #self.web_tools = 
         #self.tools = []

@@ -227,7 +227,7 @@ By reading the content of the searched results, the agent should be able to give
 
 You will complete and run code in `web_search.py` for this part of the assignment. We provide most of the implementation, including the `WebTools` class, which enables the search functionality using the code described above. `WebTools` will be used in the `WebSearchAgent` class. Before you run the script, please remember to set the `SERPAPI_API_KEY` value to your api key. You will finish implementing the following components:
 
-1. Complete the `WebSearchQA` class by defining the objective of the agent and defining the input and response (Hint: it might be helpful to reference the `MovieTicketAgent` class from `agent.py`)
+1. Complete the `WebSearchQA` class by defining the objective of the agent and defining the input and response
 2. Define `self.web_tools` and `self.tools` in `WebSearchAgent.__init__` (one line each)
 3. Finish writing the `forward` function
 4. Write 5 more prompts that can test the agent's web search ability
@@ -244,7 +244,7 @@ You can assume that within each interaction, the user is the same person.
 
 There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your Dspy ReAct agent.
 
-We will use a library called [Mem0](https://github.com/mem0ai/mem0). In the starter code in `agent_memory.py`, we initialize the memory system by using:
+We will use a library called [Mem0](https://github.com/mem0ai/mem0). In the starter code in `agent_memory.py`, we initialize the memory system like the following:
 
 ```python
 from mem0 import Memory
@@ -272,16 +272,16 @@ config = {
 
 You can create tools that interact with the memory system by writing a `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, open `agent_memory.py`. We've provided most of the implementation for you. You will need to make the following adjustment:
 
-- Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
+1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
 Now that we have a `MemoryTools` class working, you can integrate it with our Dspy ReAct agent by writiing the `MemoryReActAgent` class. We've provided most of the implementation for you in `agent_memory.py`. You will need to complete the following parts:
 
-1. Write the `MemoryQA` class by adding a goal for the agent and defining user_input and response.
-2. In `MemoryReActAgent`, finish defining `self.tools`. For your reference, read through how tools is defined in `agent.py` and make sure to include all the functions.
+2. Complete the `MemoryQA` class by adding a goal for the agent and defining `user_input` and `response`.
+3. In `MemoryReActAgent.__init__`, finish defining `self.tools`. For your reference, read through how tools are defined in `agent.py`. Make sure to include all relevant tool functions.
 
 Now, the function `run_memory_agent` (see below) wraps everything together and is a minimal example of how the agent would work. In this function, you will need to:
 
-- Add prompts to "conversations" to demonstrate that the agent has memory.
+4. Add prompts to `conversations` in `run_memory_agent_demo` to demonstrate that the agent is able to recall a previous fact.
 
 ```python
 import time

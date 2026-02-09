@@ -44,7 +44,7 @@ class MemoryTools:
         self.memory = memory
 
     def store_memory(self, content: str, user_id: str = "default_user") -> str:
-         """
+        """
         Store a piece of information in memory.
 
         This is typically called when the agent learns something that should
@@ -58,7 +58,7 @@ class MemoryTools:
             str: A confirmation message or an error message.
         """
         try:
-            self.memory.add(content, user_id=user_id) # Add the content to Mem0's memory store.
+            self.memory.add(content, user_id=user_id) # Add the content to Mem0's memory store
             return f"Stored memory: {content}"
         except Exception as e:
             return f"Error storing memory: {str(e)}"
@@ -80,9 +80,16 @@ class MemoryTools:
             that nothing was found.
         """
         try:
-            # TODO: search for relevant memories; for your reference, it would be helpful to read the documentation of 
-            # mem0 to see how to use the search method: https://github.com/mem0ai/mem0
-            results = #TODO
+            ########################################################################
+            # TODO: search for relevant memories.
+            # Hint: it would be helpful to read the documentation of 
+            # mem0 to see how to use the `search` method: https://github.com/mem0ai/mem0
+            ########################################################################
+            results = None
+            ########################################################################
+            #                          END OF YOUR CODE                            #
+            ########################################################################
+
             if not results:
                 return "No relevant memories found."
             # Format the retrieved memories into a readable text block
@@ -129,11 +136,18 @@ def get_current_time() -> str:
 
 
 class MemoryQA(dspy.Signature):
+    ########################################################################
+    # TODO: write the goal of the agent and define the input and output    #
+    # Hint: It may be helpful to reference the WebSearchQA class           #
+    ########################################################################
     """
-    TODO: write the goal of the agent and define the input and output
+    TODO: Replace this line with the agent objective
     """
-    user_input: #TODO
-    response: #TODO
+    user_input: None
+    response: None
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
 
 class MemoryReActAgent(dspy.Module):
     """A ReAct agent enhanced with Mem0 memory capabilities."""
@@ -141,11 +155,14 @@ class MemoryReActAgent(dspy.Module):
     def __init__(self, memory: Memory):
         super().__init__()
         self.memory_tools = MemoryTools(memory)
-
-        # Create tools list for ReAct
-        #TODO: define the tools list
-        # As a hint, you should consider all the functions provided in the MemoryTools class
-        self.tools = #TODO
+        ########################################################################
+        # TODO: define the tools list for ReAct
+        # Hint: you should consider all the functions provided in the MemoryTools class
+        ########################################################################
+        self.tools = []
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
 
         # Initialize ReAct with our tools
         self.react = dspy.ReAct(
@@ -201,10 +218,19 @@ def run_memory_agent_demo():
     print("=" * 50)
 
     conversations = [
-        # TODO: add sample user inputs to demonstrate the agent's memory capabilities
-        # prompt1: this prompt should reveal certain information 
-        # prompt2: reveal more information
-        # prompt3: ask the agent to recall previously stored information
+        ########################################################################
+        # TODO: Replace the empty strings with sample user inputs to           #
+        # demonstrate the agent's memory capabilities                          #
+        ########################################################################
+        # prompt1: Reveal some information in this prompt
+        "",
+        # prompt2: Reveal more information
+        "",
+        # prompt3: Ask the agent to recall previously stored information
+        ""
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
     ]
 
     for i, user_input in enumerate(conversations, 1):
