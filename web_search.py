@@ -94,22 +94,28 @@ class WebTools:
             return f"Error during web_search: {str(e)}"
 
 class WebSearchQA(dspy.Signature):
-    """
-    [TODO]: define the objective of the web search agent.
-    """
-    user_input: str = #TODO
-    response: str = #TODO
+    ########################################################################
+    # TODO: define the objective of the web search agent
+    ########################################################################
+    user_input: str = ""
+    response: str = ""
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
 
 class WebSearchAgent(dspy.Module):
     """A ReAct agent enhanced with web search capabilities."""
 
     def __init__(self):
         super().__init__()
-        # TODO: define self.web_tools (uncomment and complete the line below)
+        ########################################################################
+        # TODO: define self.web_tools and self.tools (uncomment and complete the lines below)
+        ########################################################################
         #self.web_tools = 
-
-        # TODO: define self.tools (uncomment and complete the line below)
-        # self.tools = []
+        #self.tools = []
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
 
         self.react = dspy.ReAct(
             signature=WebSearchQA,
@@ -119,9 +125,13 @@ class WebSearchAgent(dspy.Module):
 
     def forward(self, user_input: str):
         """Process user input."""
+        ########################################################################
         # TODO: write the correct return value
-        
+        ########################################################################
 
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
 
 
 def run_web_search_agent_demo():
@@ -140,13 +150,24 @@ def run_web_search_agent_demo():
 
     conversations = [
         "What is the latest movie in December, 2025?",
-        "What are some movies from this month that I should watch?"
-        # TODO: Write 5 more prompts to demonstrate the web search capabilities of the agent.
-        # PROMPT1: 
+        "What are some movies from this month that I should watch?",
+        ########################################################################
+        # TODO: Replace the 5 empty strings with prompts to demonstrate 
+        # the web search capabilities of your agent
+        ########################################################################
+        # PROMPT1:
+        "",
         # PROMPT2:
+        "",
         # PROMPT3:
+        "",
         # PROMPT4:
+        "",
         # PROMPT5:
+        ""
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
     ]
 
     for i, user_input in enumerate(conversations, 1):

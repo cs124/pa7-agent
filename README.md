@@ -173,14 +173,14 @@ Often times our LLMs don't know the latest information (say you want to know abo
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
 There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
-To get an API key, you will need to register a free account, click subscribe, then go to the dashboard here (https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to "api_keys.py", and replace "" with your own SERPAPI key.
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to "api_keys.py", and enter your own SerpAPI key into the string.
 
 ```python
 SERPAPI_API_KEY = ""
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 ```
 
-Once you have an API key, you can use something like this to call the web search tool:
+Once you have an API key, you call the web search tool like the following:
 
 ```python
 from serpapi import GoogleSearch
@@ -225,15 +225,16 @@ def extract_text(html: str) -> str:
 
 By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025 ".
 
-You will complete and run code in web_search.py for this part of the assignment. We provide most of the implementation, including the WebTools class, which enables the search functionality using the code described above. WebTools will be used in the WebSearchAgent class. Before you run the script, please remember to set the SERPAPI_API_KEY value to your api key. You will finish implementing the following three components:
+You will complete and run code in `web_search.py` for this part of the assignment. We provide most of the implementation, including the `WebTools` class, which enables the search functionality using the code described above. `WebTools` will be used in the `WebSearchAgent` class. Before you run the script, please remember to set the `SERPAPI_API_KEY` value to your api key. You will finish implementing the following components:
 
-1. Complete the WebSearchQA class by defining the objective of the agent and defining the input and response (hint: it might be helpful to reference the MovieTicketAgent class from agent.py)
-2. Next, you will define self.web_tools (one line)
-3. Next, you will define self.tools (one line)
-4. Finally, you will finish writing the forward function
-5. Lastly, you will write 5 more prompts that can test the agent's web search ability.
+1. Complete the `WebSearchQA` class by defining the objective of the agent and defining the input and response (Hint: it might be helpful to reference the `MovieTicketAgent` class from `agent.py`)
+2. Define `self.web_tools` and `self.tools` in `WebSearchAgent.__init__` (one line each)
+3. Finish writing the `forward` function
+4. Write 5 more prompts that can test the agent's web search ability
 
-To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information.
+Now, to test the agent's web search capabilities, run `python web_search.py`!
+
+To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
 ### Function 2: Memory (25 points)
 
@@ -243,7 +244,7 @@ You can assume that within each interaction, the user is the same person.
 
 There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your Dspy ReAct agent.
 
-We will use a library called [Mem0](https://github.com/mem0ai/mem0). You can initialize the memory system by using:
+We will use a library called [Mem0](https://github.com/mem0ai/mem0). In the starter code in `agent_memory.py`, we initialize the memory system by using:
 
 ```python
 from mem0 import Memory
@@ -269,18 +270,18 @@ config = {
 }
 ```
 
-You can create tools that interact with the memory system by writing a MemoryTools class, which includes functions that store, search, fetch, and update memories. Now, open agent_memory.py. We've provided most of the implementation for you. You will need to make the following adjustment:
+You can create tools that interact with the memory system by writing a `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, open `agent_memory.py`. We've provided most of the implementation for you. You will need to make the following adjustment:
 
-1. finish writing the search_memories function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function chat_with_memories might be helpful): https://github.com/mem0ai/mem0.
+- Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
-Now that we have a MemoryTools class working, you can integrate it with our Dspy ReAct agent by writiing the MemoryReActAgent class. We've provided most of the implementation for you in agent_memory.py. You will need to complete the following parts:
+Now that we have a `MemoryTools` class working, you can integrate it with our Dspy ReAct agent by writiing the `MemoryReActAgent` class. We've provided most of the implementation for you in `agent_memory.py`. You will need to complete the following parts:
 
-1. write the MemoryQA class by adding a goal for the agent and defining user_input and response.
-2. In MemoryReActAgent, finish defining self.tools. For your reference, read through how tools is defined in agent.py and make sure to include all the functions.
+1. Write the `MemoryQA` class by adding a goal for the agent and defining user_input and response.
+2. In `MemoryReActAgent`, finish defining `self.tools`. For your reference, read through how tools is defined in `agent.py` and make sure to include all the functions.
 
-Now, the function run_memory_agent (see below) wraps everything together and is a minimal example of how the agent would work. In this function, you will need to:
+Now, the function `run_memory_agent` (see below) wraps everything together and is a minimal example of how the agent would work. In this function, you will need to:
 
-1. add prompts to "conversations" to demonstrate that the agent has memory
+- Add prompts to "conversations" to demonstrate that the agent has memory.
 
 ```python
 import time
@@ -323,7 +324,7 @@ if __name__ == "__main__":
 
 This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
-### Transcript and Submission for Assignment Part 2
+### Transcript and Submission for Part 2
 
 Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
