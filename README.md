@@ -20,7 +20,7 @@ By the end of the assignment, you will submit:
 
 Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
-- First, activate your cs124 environment. Then, download `dspy`:
+- First, activate your cs124 environment. Then, download additional required libraries:
 
     conda activate cs124
     pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
@@ -70,11 +70,11 @@ You should expect your list of movies to match exactly the ones in the example a
 
 ### Integrating Tools into an LLM Agent (5 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the dspy library to build our agent to make tool calling easier.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
-To add these tools to your agent, you can simply add them to the `tools` list in the `react_agent` variable. Dspy will automatically implement the ReAct framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
+To add these tools to your agent, you can simply add them to the `tools` list in the `react_agent` variable. DSPy will automatically implement the ReAct framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
 
 ```python
 react_agent = dspy.ReAct(
@@ -242,7 +242,7 @@ You might notice that the current agent is stateless: it doesn't remember past i
 Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
 You can assume that within each interaction, the user is the same person.
 
-There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your Dspy ReAct agent.
+There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your DSPy ReAct agent.
 
 We will use a library called [Mem0](https://github.com/mem0ai/mem0). In the starter code in `agent_memory.py`, we initialize the memory system like the following:
 
@@ -274,7 +274,7 @@ You can create tools that interact with the memory system by writing a `MemoryTo
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
-Now that we have a `MemoryTools` class working, you can integrate it with our Dspy ReAct agent by writiing the `MemoryReActAgent` class. We've provided most of the implementation for you in `agent_memory.py`. You will need to complete the following parts:
+Now that we have a `MemoryTools` class working, you can integrate it with our DSPy ReAct agent by writiing the `MemoryReActAgent` class. We've provided most of the implementation for you in `agent_memory.py`. You will need to complete the following parts:
 
 2. Complete the `MemoryQA` class by adding a goal for the agent and defining `user_input` and `response`.
 3. In `MemoryReActAgent.__init__`, finish defining `self.tools`. For your reference, read through how tools are defined in `agent.py`. Make sure to include all relevant tool functions.
@@ -328,12 +328,15 @@ This is just a minimal demo to illustrate the memory capabilities of the agent, 
 
 Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
-### EXTRA CREDIT QUESTION: Final integration
+## EXTRA CREDIT: Final integration
 
 There are two ways you can receive extra credits for this assignment:
 
-1. Come up with an additional feature besides web search and memory and use dspy to show case the additional feature. Feel free to be creative! We've provided a starter file "extra_credit1.py" for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
-2. Integrating web search and memory back into the movie agent: Now that we've implemented both web_search.py and agent_memory.py, you could piece these features back into the movie agent to perform web search as well as search memories. To do so, you can migrate the functionalities from web_search.py to the MemoryReActAgent. We've provided a started file "extra_credit2.py" for you to get started. Your job is to move existing functions from the three agents you implemented here and integrating them into one single agent by unifying the tools. Like before, you will submit a transcript to demonstrate that the agent has all three features (i.e. can book tickets, has memory, and can do web search)!
+1. Come up with an additional feature besides web search and memory and use `DSPy` to show case the additional feature. Feel free to be creative! We've provided a starter file `extra_credit1.py` for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
+
+2. Integrating both web search and memory into the movie agent. Now that we've implemented both     `web_search.py` and `agent_memory.py`, you could combine these features to make a movie agent that can perform web search as well as search memories. To do so, you can migrate the functionalities from `web_search.py` to the `MemoryReActAgent`. We've provided some starter code in `extra_credit2.py` for you to use. Your job is to move existing functions from the three agents you implemented here and integrating them into one single agent by unifying the tools. Like before, you will submit a transcript to demonstrate that the agent has all three features (i.e. can book tickets, has memory, and can do web search)!
+
+# Submitting the Assignment
 
 Submit your assignment via Gradescope. We expect the following files in your final submission:
 

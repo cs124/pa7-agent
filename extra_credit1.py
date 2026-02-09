@@ -1,5 +1,5 @@
 """
-Extra Credit Assignment (Option 1)
+Extra Credit (Option 1)
 
 In this assignment, you will create your own AI agent using DSPy and any tools/APIs you choose.
 
@@ -9,7 +9,7 @@ Your agent should:
 3. Demonstrate your implementation with a working example
 
 You have complete freedom to:
-- Choose what your agent does (data analysis, creative generation, web search, memory, etc.)
+- Choose what your agent does (data analysis, creative generation, etc.)
 - Select which APIs or libraries to integrate
 - Design the interface and interaction pattern
 

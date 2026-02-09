@@ -1,7 +1,7 @@
 """
-Extra Credit Assignment (Option 2)
+Extra Credit (Option 2)
 
-In this assignment, you will combine everything you've implemented into one single agent:
+You will combine everything you've implemented into one single agent:
 1. Web search - to find information about movies, showtimes, reviews, etc.
 2. Memory - to remember user preferences and past interactions
 
