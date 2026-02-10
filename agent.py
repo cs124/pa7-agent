@@ -3,12 +3,19 @@ import random
 import string
 import dspy
 import os
-from api_keys import TOGETHER_API_KEY
+from api_keys import TOGETHER_API_KEY, SERPAPI_API_KEY
 import util
 import numpy as np
 from synthetic_users import SYNTHETIC_USERS
+from typing import Optional
+from serpapi import GoogleSearch
+from bs4 import BeautifulSoup
+from mem0 import Memory
+from datetime import datetime
+import time
 
 os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
+os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 
 ## load ratings matrix and convert user ratings to binary
 titles, ratings_matrix = util.load_ratings('data/ratings.txt')
@@ -170,6 +177,32 @@ def general_qa(user_request: str):
     response = lm(messages=[{"role": "user", "content": user_request}])
     return response
 
+def find_time(movie_title: str):
+    """Find the time of the given movie title. Title must be one of: [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, Star Wars: Episode IV - A New Hope, Titanic]"""
+    movie = showtime_database[movie_title]
+    return movie.start_time
+
+def find_price(movie_title: str):
+    """Find the price of the given movie title. Title must be one of: [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, Star Wars: Episode IV - A New Hope, Titanic]"""
+    movie = showtime_database[movie_title]
+    return movie.price
+
+def find_balance(user_name: str):
+    """Find the balance of the given user name. Name must be one of: [peter, emma, jake, sarah, michael, lisa, marcus, sophia, chris, amy]"""
+    user_profile = user_database[user_name.lower()]
+    return user_profile.balance
+
+def file_request(user_request: str, user_name: str):
+    """File a human customer support request if this is something the agent cannot handle."""
+    request_id = _generate_id(length=6)
+    request_database[request_id] = Request(
+        user_request=user_request,
+        user_name=user_name,
+    )
+    return request_id
+
+
+
 def book_ticket(user_name: str, movie_title: str):
     """
     Book a ticket for the given user and movie title. Tile must be one of: 
@@ -190,9 +223,9 @@ def book_ticket(user_name: str, movie_title: str):
     return f"Ticket booked successfully for {user_name} for the movie {movie_title}. The ticket number is {ticket_number}. Your new balance is {user_profile.balance}."
 
 
-## TODO: implement other tools for your agent
 
-## Integrating tools into an LLM agent
+
+## Integrating tools into an LLM agent: you will use the agent below for part 1
 
 class MovieTicketAgent(dspy.Signature):
     """
@@ -222,3 +255,285 @@ react_agent = dspy.ReAct(
         ########################################################################
     ]
 )
+
+
+################################################################################################################################################
+# PART 2:
+
+## web search utilities 
+
+def extract_text(html: str) -> str:
+    """
+    Extracts clean, readable text from raw HTML.
+
+    This function takes an HTML page (returned from a web request) and removes
+    non-readable content. 
+
+    Args:
+        html (str): Raw HTML content of a web page.
+
+    Returns:
+        str: Cleaned plain-text version of the page content.
+    """
+    soup = BeautifulSoup(html, "html.parser")   # Parse the raw HTML into a structured BeautifulSoup object
+    for tag in soup(["script", "style", "noscript"]): # Remove tags that do not contain meaningful visible text
+        tag.decompose()
+    text = soup.get_text(separator=" ", strip=True)  # Extract all remaining visible text from the HTML
+    return " ".join(text.split())
+
+
+
+class WebTools:
+    """
+    Utility class that provides web search and page-reading tools for the agent.
+
+    This class acts as a thin wrapper around a web search API (SerpAPI).
+    The agent calls these methods when it needs *external information*
+    that is not available in its prompt or memory.
+
+    Conceptually:
+    - The LLM decides *when* to search
+    - This class handles *how* the search is executed
+    - The returned text is formatted to be readable by both humans and LLMs
+    """
+
+    def __init__(self, serpapi_key: Optional[str] = None):
+        self.serpapi_key = serpapi_key or os.getenv("SERPAPI_API_KEY")
+
+    def web_search(self, query: str, num_results: int = 5, page: int = 1) -> str:
+        """
+        Search the web and return top links/snippets.
+        Args:
+          query: search query string
+          num_results: number of results to return (recommended <= 10)
+          page: pagination index starting from 1
+        Returns:
+          A formatted list of results with title, link, and snippet.
+        """
+        if not self.serpapi_key:
+            return "Error: SERPAPI_API_KEY is not set."
+
+        # Bing via SerpAPI. Pagination is controlled by 'first' for bing.
+        # page=1 => first=0, page=2 => first=num_results, etc.
+        first = (max(page, 1) - 1) * num_results
+        # Parameters passed to the SerpAPI search endpoint.
+        # We use Bing here, but SerpAPI supports multiple search engines.
+        params = {
+            "engine": "bing",
+            "q": query,
+            "api_key": self.serpapi_key,
+            "count": num_results,
+            "first": first,
+        }
+
+        try:
+            results = GoogleSearch(params).get_dict()  # Execute the search request and parse the JSON response
+            organic = results.get("organic_results", []) or []
+            if not organic:
+                return "No results found."
+            # Build a human- and LLM-readable summary of the results
+            lines = [f"Web search results for: {query} (page {page})"]
+            for i, item in enumerate(organic[:num_results], 1):
+                title = item.get("title") or "(no title)"
+                link = item.get("link") or "(no link)"
+                snippet = item.get("snippet") or ""
+                # Each result is formatted as a numbered block
+                lines.append(f"{i}. {title}\n   {link}\n   {snippet}".strip())
+
+            return "\n".join(lines)
+
+        except Exception as e:
+            return f"Error during web_search: {str(e)}"
+
+
+
+# memory functionalities
+## Memory configuration
+memory_config = {
+    "llm": {
+        "provider": "together",
+        "config": {
+            "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+            "temperature": 0.1
+        }
+    },
+    "embedder": {
+        "provider": "together",
+        "config": {
+            "model": "Alibaba-NLP/gte-modernbert-base"
+        }
+    },
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "embedding_model_dims": 768
+        }
+    }
+}
+
+
+
+## memory utilities
+
+class MemoryTools:
+    """Tools for interacting with the Mem0 memory system."""
+
+    def __init__(self, memory: Memory):
+        self.memory = memory
+
+    def store_memory(self, content: str, user_id: str = "default_user") -> str:
+        """
+        Store a piece of information in memory.
+
+        This is typically called when the agent learns something that should
+        persist across turns (e.g., user preferences, reminders, personal facts).
+
+        Args:
+            content (str): The text to store in memory.
+            user_id (str): Identifier for the user whose memory this belongs to.
+
+        Returns:
+            str: A confirmation message or an error message.
+        """
+        try:
+            self.memory.add(content, user_id=user_id) # Add the content to Mem0's memory store
+            return f"Stored memory: {content}"
+        except Exception as e:
+            return f"Error storing memory: {str(e)}"
+
+    def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
+        """
+        Search memory for items relevant to a query.
+
+        This is used when the agent needs to recall previously stored information,
+        such as user preferences or earlier statements.
+
+        Args:
+            query (str): Natural-language search query.
+            user_id (str): Identifier for the user whose memory should be searched.
+            limit (int): Maximum number of memories to return.
+
+        Returns:
+            str: A formatted list of relevant memories or a message indicating
+            that nothing was found.
+        """
+        try:
+            ########################################################################
+            # TODO: search for relevant memories.
+            # Hint: it would be helpful to read the documentation of 
+            # mem0 to see how to use the `search` method: https://github.com/mem0ai/mem0
+            ########################################################################
+            results = None
+            ########################################################################
+            #                          END OF YOUR CODE                            #
+            ########################################################################
+            if not results:
+                return "No relevant memories found."
+
+            memory_text = "Relevant memories found:\n"
+            for i, result in enumerate(results["results"]):
+                memory_text += f"{i}. {result['memory']}\n"
+            return memory_text
+        except Exception as e:
+            return f"Error searching memories: {str(e)}"
+
+    def get_all_memories(self, user_id: str = "default_user") -> str:
+        """Get all memories for a user."""
+        try:
+            results = self.memory.get_all(user_id=user_id)
+            if not results:
+                return "No memories found for this user."
+
+            memory_text = "All memories for user:\n"
+            for i, result in enumerate(results["results"]):
+                memory_text += f"{i}. {result['memory']}\n"
+            return memory_text
+        except Exception as e:
+            return f"Error retrieving memories: {str(e)}"
+    
+    def update_memory(self, memory_id: str, new_content: str) -> str:
+        """Update an existing memory."""
+        try:
+            self.memory.update(memory_id, new_content)    # Replace the old memory content with the new content
+            return f"Updated memory with new content: {new_content}"
+        except Exception as e:
+            return f"Error updating memory: {str(e)}"
+
+    def delete_memory(self, memory_id: str) -> str:
+        """Delete a specific memory."""
+        try:
+            self.memory.delete(memory_id)
+            return "Memory deleted successfully."
+        except Exception as e:
+            return f"Error deleting memory: {str(e)}"
+
+# other helper functions that are relevant
+def get_current_time() -> str:
+    """Get the current date and time."""
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def set_reminder(reminder_text: str, date_time: str = None, user_id: str = "default_user") -> str:
+    """Set a reminder for the user."""
+    reminder = f"Reminder set for {date_time}: {reminder_text}"
+    # This will be connected to memory_tools in the agent
+    return reminder
+
+def get_preferences(category: str = "general", user_id: str = "default_user") -> str:
+    """Get user preferences for a specific category."""
+    # This will be connected to memory_tools in the agent
+    return f"Getting preferences for {category}"
+
+def update_preferences(category: str, preference: str, user_id: str = "default_user") -> str:
+    """Update user preferences."""
+    # This will be connected to memory_tools in the agent
+    return f"Updated {category} preference to {preference}"
+
+## You will use the enhanced agent below for part 2
+class EnhancedMovieTicketAgent(dspy.Module):
+    """Movie ticket agent with web search and memory capabilities."""
+
+    def __init__(self, enable_web_search=True, enable_memory=True):
+        super().__init__()
+        
+        # Initialize web tools
+        self.web_tools = WebTools() if enable_web_search else None
+        
+        # Initialize memory
+        if enable_memory:
+            self.memory = Memory.from_config(memory_config)
+            self.memory_tools = MemoryTools(self.memory)
+        else:
+            self.memory = None
+            self.memory_tools = None
+        
+        ########################################################################
+        # TODO: define the tools needed 
+        ########################################################################
+        #self.tools = []
+        ########################################################################
+        #                          END OF YOUR CODE                            #
+        ########################################################################
+        
+        # Add web search tools if enabled
+        # TODO: enable web search if self.web_tools is not None
+
+
+        
+        # Add memory tools if enabled
+        # TODO: enable memory tools if self.memory_tools is not None (hint: use self.tools.extend)
+       
+        
+        # Initialize ReAct agent
+        self.react = dspy.ReAct(
+            MovieTicketAgent,
+            tools=self.tools,
+            max_iters=6
+        )
+    
+    def forward(self, user_request: str):
+        """Process user input with enhanced capabilities."""
+        return self.react(user_request=user_request)
+
+
+
+enhanced_agent = EnhancedMovieTicketAgent(enable_web_search=True, enable_memory=True)

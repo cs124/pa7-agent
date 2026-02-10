@@ -9,10 +9,10 @@ The assignment consists of a two parts. In the first part, you will implement th
 
 By the end of the assignment, you will submit:
 
-- Code file (`agent.py`) for Part 1
+- Code file (`agent.py`), which includes implementations for part 1 and 2.
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (`transcript_part1.txt`)
-- Your implementation for Part 2, preferably in the provided `agent_memory.py` and `web_search.py`, but if necessary, you can create a new file for it to break things down and upload all the agent-related files
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (`transcript_part2.txt`)
+- [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
 
 ## Important Setup Note
 
@@ -22,13 +22,13 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
 - First, activate your cs124 environment. Then, download additional required libraries:
 
-    conda activate cs124
-    pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
+  conda activate cs124
+  pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
 
 - Create a new environment just for PA7:
 
-    conda env create -f environment_pa7.yml
-    conda activate cs124_pa7
+  conda env create -f environment_pa7.yml
+  conda activate cs124_pa7
 
 ### Together API key
 
@@ -38,7 +38,7 @@ Make a new python script called `api_keys.py`. Inside the script, insert your ow
     TOGETHER_API_KEY = ""
     os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
-IMPORTANT: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make.
+IMPORTANT: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run repl.py, the API budget will be reduced.
 
 ## Starter Code
 
@@ -113,7 +113,7 @@ Here we are printing the trajectories including the tool calls and observations.
 
 ### Interfacing with Databases (20 points)
 
-An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` and `file_request` tools in `agent.py` and integrate them into your agent.
+An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` tool in `agent.py` and integrate them into your agent.
 
 We have created a mini movie showtime database in `agent.py` that you can use to gather information about the movies and help with movie booking requests. When your agent booked a new ticket, make sure to update the `ticket_database` and deduct the ticket price from the user's balance. For any requests that can't be handled by your agent, make a human customer support request by calling the `file_request` tool to add the request to the `request_database`. Your should print the databases whenever you make new updates to them.
 
@@ -164,7 +164,6 @@ Apart from the above transcript, you are also encouraged to add additional user 
 
 So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario.
 Your task is to implement functions that could support the following functionalities.
-We will outline how you might go about implementing each function, but you are free to implement them in any way you want.
 We will grade your implementation based on the interaction transcript that your agent has with the user.
 
 ### Function 1: Web Search (25 points)
@@ -225,14 +224,11 @@ def extract_text(html: str) -> str:
 
 By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025 ".
 
-You will complete and run code in `web_search.py` for this part of the assignment. We provide most of the implementation, including the `WebTools` class, which enables the search functionality using the code described above. `WebTools` will be used in the `WebSearchAgent` class. Before you run the script, please remember to set the `SERPAPI_API_KEY` value to your api key. You will finish implementing the following components:
+In `agent.py`, we provide a helper function extract_text and a WebTools class that offers basic functionalities for performing web search by calling the serpapi.
 
-1. Complete the `WebSearchQA` class by defining the objective of the agent and defining the input and response
-2. Define `self.web_tools` and `self.tools` in `WebSearchAgent.__init__` (one line each)
-3. Finish writing the `forward` function
-4. Write 5 more prompts that can test the agent's web search ability
+Your job is to add the relevant tools to the enhanced agent class (EnhancedMovieTicketAgent). Specicially, you will need to add web search tools if it is enabled.
 
-Now, to test the agent's web search capabilities, run `python web_search.py`!
+To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in repl.py before you run repl.py.
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
@@ -242,9 +238,7 @@ You might notice that the current agent is stateless: it doesn't remember past i
 Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
 You can assume that within each interaction, the user is the same person.
 
-There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your DSPy ReAct agent.
-
-We will use a library called [Mem0](https://github.com/mem0ai/mem0). In the starter code in `agent_memory.py`, we initialize the memory system like the following:
+There are many ways to implement the memory system. We will use a library called [Mem0](https://github.com/mem0ai/mem0). In `agent.py`, we initialize the memory system like the following:
 
 ```python
 from mem0 import Memory
@@ -253,74 +247,34 @@ from mem0 import Memory
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
 # Initialize Mem0 memory system
-config = {
+memory_config = {
     "llm": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "gpt-4o-mini",
+            "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
             "temperature": 0.1
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "text-embedding-3-small"
+            "model": "Alibaba-NLP/gte-modernbert-base"
+        }
+    },
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "embedding_model_dims": 768
         }
     }
 }
 ```
 
-You can create tools that interact with the memory system by writing a `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, open `agent_memory.py`. We've provided most of the implementation for you. You will need to make the following adjustment:
+We provide the starter code for the `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, your job is as follows:
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
-Now that we have a `MemoryTools` class working, you can integrate it with our DSPy ReAct agent by writiing the `MemoryReActAgent` class. We've provided most of the implementation for you in `agent_memory.py`. You will need to complete the following parts:
-
-2. Complete the `MemoryQA` class by adding a goal for the agent and defining `user_input` and `response`.
-3. In `MemoryReActAgent.__init__`, finish defining `self.tools`. For your reference, read through how tools are defined in `agent.py`. Make sure to include all relevant tool functions.
-
-Now, the function `run_memory_agent` (see below) wraps everything together and is a minimal example of how the agent would work. In this function, you will need to:
-
-4. Add prompts to `conversations` in `run_memory_agent_demo` to demonstrate that the agent is able to recall a previous fact.
-
-```python
-import time
-def run_memory_agent_demo():
-    """Demonstration of memory-enhanced ReAct agent."""
-
-    # Configure DSPy
-    lm = dspy.LM(model='openai/gpt-4o-mini')
-    dspy.configure(lm=lm)
-
-    # Initialize memory system
-    memory = Memory.from_config(config)
-
-    # Create our agent
-    agent = MemoryReActAgent(memory)
-
-    # Sample conversation demonstrating memory capabilities
-    print("🧠 Memory-Enhanced ReAct Agent Demo")
-    print("=" * 50)
-
-    conversations = [
-       #TODO
-    ]
-
-    for i, user_input in enumerate(conversations, 1):
-        print(f"\n📝 User: {user_input}")
-
-        try:
-            response = agent(user_input=user_input)
-            print(f"🤖 Agent: {response.response}")
-            time.sleep(1)
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-
-# Run the demonstration
-if __name__ == "__main__":
-    run_memory_agent_demo()
-```
+Now that we have a `MemoryTools` class working, we can integrate it with our DSPy ReAct agent in EnhancedMovieTicket Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
 
 This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
@@ -328,13 +282,9 @@ This is just a minimal demo to illustrate the memory capabilities of the agent, 
 
 Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
-## EXTRA CREDIT: Final integration
+## EXTRA CREDIT: a new feature of your choice!
 
-There are two ways you can receive extra credits for this assignment:
-
-1. Come up with an additional feature besides web search and memory and use `DSPy` to show case the additional feature. Feel free to be creative! We've provided a starter file `extra_credit1.py` for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
-
-2. Integrating both web search and memory into the movie agent. Now that we've implemented both     `web_search.py` and `agent_memory.py`, you could combine these features to make a movie agent that can perform web search as well as search memories. To do so, you can migrate the functionalities from `web_search.py` to the `MemoryReActAgent`. We've provided some starter code in `extra_credit2.py` for you to use. Your job is to move existing functions from the three agents you implemented here and integrating them into one single agent by unifying the tools. Like before, you will submit a transcript to demonstrate that the agent has all three features (i.e. can book tickets, has memory, and can do web search)!
+Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature besides web search and memory and use `DSPy` to show case the additional feature. Feel free to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
 
 # Submitting the Assignment
 
@@ -342,8 +292,6 @@ Submit your assignment via Gradescope. We expect the following files in your fin
 
     agent.py
     api_keys.py
-    web_search.py
-    agent_memory.py
     transcript_part1.txt (you will need to create this text file)
     transcript_part2.txt (you will need to create this text file)
     * any auxiliary code files you created for Part 2
