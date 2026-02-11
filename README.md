@@ -22,13 +22,13 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
 - First, activate your cs124 environment. Then, download additional required libraries:
 
-  conda activate cs124
-  pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
+    conda activate cs124
+    pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
 
 - Create a new environment just for PA7:
 
-  conda env create -f environment_pa7.yml
-  conda activate cs124_pa7
+    conda env create -f environment_pa7.yml
+    conda activate cs124_pa7
 
 ### Together API key
 
@@ -172,7 +172,7 @@ Often times our LLMs don't know the latest information (say you want to know abo
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
 There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
-To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to "api_keys.py", and enter your own SerpAPI key into the string.
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to `api_keys.py`, and enter your own SerpAPI key into the string.
 
 ```python
 SERPAPI_API_KEY = ""
@@ -222,13 +222,13 @@ def extract_text(html: str) -> str:
     return " ".join(text.split())
 ```
 
-By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025 ".
+By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025."
 
-In `agent.py`, we provide a helper function extract_text and a WebTools class that offers basic functionalities for performing web search by calling the serpapi.
+In `agent.py`, we provide a helper function `extract_text` and a `WebTools` class that offers basic functionalities for performing web search by calling the serpapi.
 
-Your job is to add the relevant tools to the enhanced agent class (EnhancedMovieTicketAgent). Specicially, you will need to add web search tools if it is enabled.
+Your job is to add the relevant tools to the enhanced agent class (`EnhancedMovieTicketAgent`). Specicially, you will need to add web search tools if web search is enabled.
 
-To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in repl.py before you run repl.py.
+To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`.
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
@@ -274,7 +274,9 @@ We provide the starter code for the `MemoryTools` class, which includes function
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
-Now that we have a `MemoryTools` class working, we can integrate it with our DSPy ReAct agent in EnhancedMovieTicket Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
+2. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
+
+To test the agent's memory capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`. After you have implemented both the web search and memory functions, you should end up with an agent that can both handle web searches and remember important user information!
 
 This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 

@@ -85,6 +85,9 @@ ticket_database = {}
 request_database = {}
 
 
+################################################################################################################################################
+# PART 1
+
 ## defining tools and helper functions for the tools
 
 def _generate_id(length=8):
@@ -154,7 +157,8 @@ def recommend_movies(user_name: str, k=3):
     user_ratings = user_ratings_dict[user_name]
 
     ########################################################################
-    # TODO: Implement collaborative filtering to generate a list of movie indices to recommend to the user.
+    # TODO: Implement collaborative filtering to generate a list of movie  #
+    # indices to recommend to the user.                                    #
     ########################################################################
     # Populate this list with k movie indices to recommend to the user.
     recommendations = []
@@ -178,29 +182,47 @@ def general_qa(user_request: str):
     return response
 
 def find_time(movie_title: str):
-    """Find the time of the given movie title. Title must be one of: [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, Star Wars: Episode IV - A New Hope, Titanic]"""
+    """
+    Find the time of the given movie title. Title must be one of: 
+    [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, 
+    Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, 
+    Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, 
+    Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, 
+    Star Wars: Episode IV - A New Hope, Titanic]
+    """
     movie = showtime_database[movie_title]
     return movie.start_time
 
 def find_price(movie_title: str):
-    """Find the price of the given movie title. Title must be one of: [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, Star Wars: Episode IV - A New Hope, Titanic]"""
+    """
+    Find the price of the given movie title. Title must be one of: 
+    [Back to the Future, Speed, Star Wars: Episode VI - Return of the Jedi, 
+    Terminator, Star Wars: Episode V - The Empire Strikes Back, Matrix, 
+    Silence of the Lambs, Fight Club, Lord of the Rings: The Two Towers, 
+    Lord of the Rings: The Fellowship of the Ring, Pulp Fiction, 
+    Star Wars: Episode IV - A New Hope, Titanic]
+    """
     movie = showtime_database[movie_title]
     return movie.price
 
 def find_balance(user_name: str):
-    """Find the balance of the given user name. Name must be one of: [peter, emma, jake, sarah, michael, lisa, marcus, sophia, chris, amy]"""
+    """
+    Find the balance of the given user name. 
+    Name must be one of: [peter, emma, jake, sarah, michael, lisa, marcus, sophia, chris, amy]
+    """
     user_profile = user_database[user_name.lower()]
     return user_profile.balance
 
 def file_request(user_request: str, user_name: str):
-    """File a human customer support request if this is something the agent cannot handle."""
+    """
+    File a human customer support request if this is something the agent cannot handle.
+    """
     request_id = _generate_id(length=6)
     request_database[request_id] = Request(
         user_request=user_request,
         user_name=user_name,
     )
     return request_id
-
 
 
 def book_ticket(user_name: str, movie_title: str):
@@ -214,15 +236,20 @@ def book_ticket(user_name: str, movie_title: str):
     """
    
     ########################################################################
-    ## TODO: Implement the book_ticket tool                                #
+    # TODO: Implement the `book_ticket` tool                                
+    # * Only make a booking if the user has enough balance. Then, update the 
+    #   user's balance in `ticket_database`.
+    # * Use `_generate_id` to create a 6-digit ticket number for the booking
+    # * For any requests that can't be handled by your agent, make a human 
+    #   customer support request by calling the `file_request` tool 
+    #   to add the request to the `request_database`
     ########################################################################
-
+    ticket_number = '0'
+    user_balance = None
     ########################################################################
     #                          END OF YOUR CODE                            #
     ########################################################################
-    return f"Ticket booked successfully for {user_name} for the movie {movie_title}. The ticket number is {ticket_number}. Your new balance is {user_profile.balance}."
-
-
+    return f"Ticket booked successfully for {user_name} for the movie {movie_title}. The ticket number is {ticket_number}. Your new balance is {user_balance}."
 
 
 ## Integrating tools into an LLM agent: you will use the agent below for part 1
@@ -258,9 +285,9 @@ react_agent = dspy.ReAct(
 
 
 ################################################################################################################################################
-# PART 2:
+# PART 2
 
-## web search utilities 
+## Part 2: web search utilities 
 
 def extract_text(html: str) -> str:
     """
@@ -280,7 +307,6 @@ def extract_text(html: str) -> str:
         tag.decompose()
     text = soup.get_text(separator=" ", strip=True)  # Extract all remaining visible text from the HTML
     return " ".join(text.split())
-
 
 
 class WebTools:
@@ -372,9 +398,7 @@ memory_config = {
 }
 
 
-
-## memory utilities
-
+## Part 2: memory utilities
 class MemoryTools:
     """Tools for interacting with the Mem0 memory system."""
 
@@ -467,10 +491,12 @@ class MemoryTools:
         except Exception as e:
             return f"Error deleting memory: {str(e)}"
 
-# other helper functions that are relevant
+
+# other helper functions
 def get_current_time() -> str:
     """Get the current date and time."""
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 def set_reminder(reminder_text: str, date_time: str = None, user_id: str = "default_user") -> str:
     """Set a reminder for the user."""
@@ -478,15 +504,18 @@ def set_reminder(reminder_text: str, date_time: str = None, user_id: str = "defa
     # This will be connected to memory_tools in the agent
     return reminder
 
+
 def get_preferences(category: str = "general", user_id: str = "default_user") -> str:
     """Get user preferences for a specific category."""
     # This will be connected to memory_tools in the agent
     return f"Getting preferences for {category}"
 
+
 def update_preferences(category: str, preference: str, user_id: str = "default_user") -> str:
     """Update user preferences."""
     # This will be connected to memory_tools in the agent
     return f"Updated {category} preference to {preference}"
+
 
 ## You will use the enhanced agent below for part 2
 class EnhancedMovieTicketAgent(dspy.Module):
@@ -507,22 +536,13 @@ class EnhancedMovieTicketAgent(dspy.Module):
             self.memory_tools = None
         
         ########################################################################
-        # TODO: define the tools needed 
+        # TODO: Add tools for web search and memory if they are enabled        #
         ########################################################################
-        #self.tools = []
+        self.tools = []
+       
         ########################################################################
         #                          END OF YOUR CODE                            #
         ########################################################################
-        
-        # Add web search tools if enabled
-        # TODO: enable web search if self.web_tools is not None
-
-
-        
-        # Add memory tools if enabled
-        # TODO: enable memory tools if self.memory_tools is not None (hint: use self.tools.extend)
-       
-        
         # Initialize ReAct agent
         self.react = dspy.ReAct(
             MovieTicketAgent,
@@ -533,7 +553,6 @@ class EnhancedMovieTicketAgent(dspy.Module):
     def forward(self, user_request: str):
         """Process user input with enhanced capabilities."""
         return self.react(user_request=user_request)
-
 
 
 enhanced_agent = EnhancedMovieTicketAgent(enable_web_search=True, enable_memory=True)
