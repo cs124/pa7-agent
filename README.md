@@ -21,14 +21,16 @@ By the end of the assignment, you will submit:
 Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
 - First, activate your cs124 environment. Then, download additional required libraries:
-
+    ```
     conda activate cs124
     pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
+    ```
 
 - Create a new environment just for PA7:
-
+    ```
     conda env create -f environment_pa7.yml
     conda activate cs124_pa7
+    ```
 
 ### Together API key
 
@@ -299,3 +301,4 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2
 
 **We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.** If you would like to work out an alternative accomodation please make a private Ed post.
+
