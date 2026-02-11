@@ -72,11 +72,15 @@ You should expect your list of movies to match exactly the ones in the example a
 
 ### Integrating Tools into an LLM Agent (5 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. 
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
-To add these tools to your agent, you can simply add them to the `tools` list in the `react_agent` variable. DSPy will automatically implement the ReAct framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
+You have two tasks:
+
+1. Flesh out the agent objective in the docstring of the `MovieTicketAgent` class in `agent.py`.
+
+2. Add necessary tools to your agent by adding them to the `tools` list in the `react_agent` variable. `DSPy` will automatically implement the `ReAct` framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
 
 ```python
 react_agent = dspy.ReAct(

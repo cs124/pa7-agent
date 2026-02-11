@@ -254,13 +254,23 @@ def book_ticket(user_name: str, movie_title: str):
 
 ## Integrating tools into an LLM agent: you will use the agent below for part 1
 
+# The MovieTicketAgent class is a wrapper that modifies dspy.Signature. If you are curious
+# about the signature, read the documentation here:
+# https://dspy.ai/learn/programming/signatures/#class-based-dspy-signatures
+
 class MovieTicketAgent(dspy.Signature):
+    ########################################################################
+    ## TODO: Add a few sentences to flesh out the agent objective in the docstring below.
+    # In DSPy, the docstring of a Signature acts as the system prompt 
+    # for the language model. It defines the agent’s role, constraints, 
+    # and decision-making strategy. So it is crucial to define it well!
+    ########################################################################
     """
     You are a movie ticket agent that helps user book and manage movie tickets.
-
-    You are given a list of tools to handle user request, and you should 
-    decide the right tool to use in order to fulfill users' request.
     """
+    ########################################################################
+    #                          END OF YOUR CODE                            #
+    ########################################################################
     
     user_request: str = dspy.InputField()
     process_result: str = dspy.OutputField(
@@ -268,6 +278,7 @@ class MovieTicketAgent(dspy.Signature):
     )
 
 dspy.configure(lm=dspy.LM("together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1"))
+
 react_agent = dspy.ReAct(
     MovieTicketAgent,
     tools = [
