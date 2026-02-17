@@ -10,6 +10,7 @@ The assignment consists of a two parts. In the first part, you will implement th
 By the end of the assignment, you will submit:
 
 - Code file (`agent.py`), which includes implementations for part 1 and 2.
+- A file for the api keys: api_keys.py
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (`transcript_part1.txt`)
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (`transcript_part2.txt`)
 - [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
@@ -21,16 +22,17 @@ By the end of the assignment, you will submit:
 Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
 - First, activate your cs124 environment. Then, download additional required libraries:
-    ```
-    conda activate cs124
-    pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
-    ```
+
+  ```
+  conda activate cs124
+  pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
+  ```
 
 - Create a new environment just for PA7:
-    ```
-    conda env create -f environment_pa7.yml
-    conda activate cs124_pa7
-    ```
+  ```
+  conda env create -f environment_pa7.yml
+  conda activate cs124_pa7
+  ```
 
 ### Together API key
 
@@ -72,7 +74,7 @@ You should expect your list of movies to match exactly the ones in the example a
 
 ### Integrating Tools into an LLM Agent (5 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. 
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
@@ -305,4 +307,3 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2
 
 **We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.** If you would like to work out an alternative accomodation please make a private Ed post.
-
