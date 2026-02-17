@@ -306,4 +306,4 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     transcript_part2.txt (you will need to create this text file)
     * any auxiliary code files you created for Part 2
 
-**We will use your serpapi key to run the autograder on your submission for part 2 of the assignment. Make sure to include your key in api_keys.py and make sure to submit api_keys.py as a part of your assignment.** Please make sure that in your serpapi account, you have more than 10 searches left. You can check how many searches you have in your account on the dashboard.
+**We will use your serpapi key to run the autograder on your submission for part 2 of the assignment. Make sure to include your key in api_keys.py and make sure to submit api_keys.py as a part of your assignment.** Please make sure that in your serpapi account, you have more than 5 searches left. You can check how many searches you have in your account on the dashboard.
