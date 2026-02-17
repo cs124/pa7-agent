@@ -264,9 +264,11 @@ class MovieTicketAgent(dspy.Signature):
     # In DSPy, the docstring of a Signature acts as the system prompt 
     # for the language model. It defines the agent’s role, constraints, 
     # and decision-making strategy. So it is crucial to define it well!
+    # Hint: you can add details about what tools the agent will need to call in order to successfully complete the tasks
     ########################################################################
     """
-    You are a movie ticket agent that helps user book and manage movie tickets.
+    You are a movie ticket agent that helps user book and manage movie tickets. You are given a list of tools to handle user request, and you should decide the right tool to use in order to
+    fulfill users' request.  [TODO: add more details about the agent's objective and strategy here!]
     """
     ########################################################################
     #                          END OF YOUR CODE                            #
@@ -530,7 +532,13 @@ def update_preferences(category: str, preference: str, user_id: str = "default_u
 
 ## You will use the enhanced agent below for part 2
 class EnhancedMovieTicketAgent(dspy.Module):
-    """Movie ticket agent with web search and memory capabilities."""
+    """Movie ticket agent with web search and memory capabilities.  You have access to web search to find current movie information, memory to remember user preferences,
+    and various tools to handle user requests. You should decide the right tool to use in order to
+    fulfill users' request.
+    
+    When users share preferences or information, store it in memory.
+    When you need to recall user preferences, search memories.
+    When you need current movie information, use web search."""
 
     def __init__(self, enable_web_search=True, enable_memory=True):
         super().__init__()
