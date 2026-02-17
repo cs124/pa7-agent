@@ -9,7 +9,7 @@ import numpy as np
 from synthetic_users import SYNTHETIC_USERS
 from typing import Optional
 from serpapi import GoogleSearch
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoups
 from mem0 import Memory
 from datetime import datetime
 import time
@@ -17,7 +17,8 @@ import time
 os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 
-## load ratings matrix and convert user ratings to binary
+## load ratings matrix and convert user ratings to binary in user_ratings_dict
+# note that the users in ratings_matrix are different from the users in user_ratings_dict
 titles, ratings_matrix = util.load_ratings('data/ratings.txt')
 user_ratings_dict = {user: np.zeros(len(titles)) for user in SYNTHETIC_USERS}
 for user, movies in SYNTHETIC_USERS.items():
@@ -46,7 +47,7 @@ class Movie(BaseModel):
 class Ticket(BaseModel):
     user_name: str
     movie_title: str
-    time: Date
+    start_time: Date
 
 class Request(BaseModel):
     user_request: str
@@ -128,6 +129,7 @@ def similarity(u, v):
     :param u: one vector, as a 1D numpy array
     :param v: another vector, as a 1D numpy array
     :returns: the cosine similarity between the two vectors
+    Note: you should return 0 if u or v has norm 0
     """
     ########################################################################
     # TODO: Compute cosine similarity between the two vectors.             #
@@ -147,10 +149,13 @@ def recommend_movies(user_name: str, k=3):
 
     As a precondition, user_ratings have been loaded for you based on the provided user_name.
 
-    Remember to exclude movies the user has already rated!
+    Do not recommend movies that the user has already rated (since the ratings of the rated movies are used to calculate similarity to a potential recommendation)
+    If the user already rated every movie, then the function should return an empty list.
+
+    Hint: the similarity between two movies is based on the similarity of their ratings in ratings_matrix
 
     :returns: a list of k movie titles corresponding to movies in
-    ratings_matrix, in descending order of recommendation.
+    ratings_matrix, in descending order of recommendation. (the k movie titles correspond to "movie indices" in ratings_matrix)
     """
     user_profile = user_database[user_name.lower()]
     user_name = user_profile.name
@@ -173,7 +178,7 @@ def recommend_movies(user_name: str, k=3):
 
 def general_qa(user_request: str):
     """
-    Answer a general question about the airline by making an LLM call.
+    Answer a general question about movies by making an LLM call.
     """
     lm = dspy.LM("together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1")
     dspy.configure(lm=lm)
@@ -239,6 +244,7 @@ def book_ticket(user_name: str, movie_title: str):
     # TODO: Implement the `book_ticket` tool                                
     # * Only make a booking if the user has enough balance. Then, update the 
     #   user's balance in `ticket_database`.
+    #  If there is not enough balance, return: "Insufficient balance to book the ticket for {movie_title}."
     # * Use `_generate_id` to create a 6-digit ticket number for the booking
     # * For any requests that can't be handled by your agent, make a human 
     #   customer support request by calling the `file_request` tool 
@@ -433,10 +439,18 @@ class MemoryTools:
             str: A confirmation message or an error message.
         """
         try:
-            self.memory.add(content, user_id=user_id) # Add the content to Mem0's memory store
+            # TODO: add the content to Mem0's memory store for user_id
             return f"Stored memory: {content}"
         except Exception as e:
             return f"Error storing memory: {str(e)}"
+
+    def create_memory(results):
+        """
+        Helper function that creates the memory_text string containing all of the memories. You will call this function
+        in search_memories and get_all_memories().
+        This function should return memory_text
+        """
+        # TODO
 
     def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
         """
@@ -467,9 +481,7 @@ class MemoryTools:
             if not results:
                 return "No relevant memories found."
 
-            memory_text = "Relevant memories found:\n"
-            for i, result in enumerate(results["results"]):
-                memory_text += f"{i}. {result['memory']}\n"
+            memory_text = create_memory(results)
             return memory_text
         except Exception as e:
             return f"Error searching memories: {str(e)}"
@@ -477,13 +489,11 @@ class MemoryTools:
     def get_all_memories(self, user_id: str = "default_user") -> str:
         """Get all memories for a user."""
         try:
-            results = self.memory.get_all(user_id=user_id)
+            # TODO: get all memories for a given user_id
             if not results:
                 return "No memories found for this user."
 
-            memory_text = "All memories for user:\n"
-            for i, result in enumerate(results["results"]):
-                memory_text += f"{i}. {result['memory']}\n"
+            memory_text = create_memory(results)
             return memory_text
         except Exception as e:
             return f"Error retrieving memories: {str(e)}"
@@ -491,7 +501,7 @@ class MemoryTools:
     def update_memory(self, memory_id: str, new_content: str) -> str:
         """Update an existing memory."""
         try:
-            self.memory.update(memory_id, new_content)    # Replace the old memory content with the new content
+            # TODO: Replace the old memory content with the new content
             return f"Updated memory with new content: {new_content}"
         except Exception as e:
             return f"Error updating memory: {str(e)}"
@@ -499,7 +509,7 @@ class MemoryTools:
     def delete_memory(self, memory_id: str) -> str:
         """Delete a specific memory."""
         try:
-            self.memory.delete(memory_id)
+            # TODO: delete the memory for a given memory_id
             return "Memory deleted successfully."
         except Exception as e:
             return f"Error deleting memory: {str(e)}"

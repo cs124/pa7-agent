@@ -15,6 +15,17 @@ By the end of the assignment, you will submit:
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (`transcript_part2.txt`)
 - [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
 
+Below is an overview for what you will implement for the assignment:
+
+- Core functions for the movie agent (part 1)
+  - binarize (10 points)
+  - similarity (10 points)
+  - recommend_movies (10 points)
+  - book_ticket (10 points)
+- The MovieTicketAgent class (part 1) (10 points)
+- search_memories (part 2) (10 points)
+- The EnhancedMovieTicketAgent class (part 2) (10 points)
+
 ## Important Setup Note
 
 ### Environment
@@ -42,7 +53,33 @@ Make a new python script called `api_keys.py`. Inside the script, insert your ow
     TOGETHER_API_KEY = ""
     os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
-IMPORTANT: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run repl.py, the API budget will be reduced.
+IMPORTANT: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run repl.py, the API budget will be reduced. We have provided `api_keys_example.py` -- you can fill in your key and rename the file to `api_keys.py`.
+
+### SERPAPI Key (for part 2)
+
+For part 2 of the assignment, you will add search functions to the agent. There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to `api_keys.py`, and enter your own SerpAPI key into the string.
+
+```python
+SERPAPI_API_KEY = ""
+os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
+```
+
+### Testing API key
+
+It is important to ensure that your API keys work as intended. To confirm that the API keys are working, you can run the following line:
+
+```python
+python test_api_keys.py
+```
+
+You should see the following three print statements:
+
+```python
+Keys are non-empty.
+Together API key works!
+SerpAPI key works!
+```
 
 ## Starter Code
 
@@ -57,11 +94,33 @@ All the code that you will need to write for this assignment will be in `agent.p
 
 ## Part 1: Basic Tool-Use Agent (50 points)
 
-### First Tool: Recommend Movies via Collaborative Filtering (25 points)
+### First Tool: Recommend Movies via Collaborative Filtering (30 points)
 
 One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `binarize`, `similarity`, and `recommend_movies` functions in `agent.py`.
 
-We have included the movie ratings matrix in `data/ratings.txt`. You can load it using the `util.load_ratings` function. Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity with no mean-centering or normalization of scores.
+To test the correctness of the `binarize` function, we have provided basic unit tests. You can run it like this:
+
+```python
+python test_functions.py --function binarize
+```
+
+You should expect to see the output "All tests passed for binarized!"
+
+To test the correctness of the `similarity` function, you can run the following line:
+
+```python
+python test_functions.py --function similarity
+```
+
+You should expect to see the output "All tests passed for similarity!"
+
+We have included the movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. You can load it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in ratings_matrix (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
+
+To test the correctness of the `recommend_movies` function, you can run the following line:
+
+```python
+python test_functions.py --function recommend_movies
+```
 
 Here is an example of what you should expect to see when you run the REPL:
 
@@ -72,9 +131,9 @@ recommend_movies("Peter", 3)
 
 You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. And we can see that the result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`.
 
-### Integrating Tools into an LLM Agent (5 points)
+### Integrating Tools into an LLM Agent (10 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the recommend_movies tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call file_request if the existing functions cannot handle the request.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
@@ -119,7 +178,7 @@ Prediction(
 
 Here we are printing the trajectories including the tool calls and observations. You can see that the agent first recommends 3 movies to the user, and then answers the general question about the plot summary of "Star Wars: Episode VI - Return of the Jedi" by making a tool call to the `general_qa` tool. In your submission, make sure your transcript includes the full trajectories like this too so that we can judge whether your agent made the right tool calls.
 
-### Interfacing with Databases (20 points)
+### Interfacing with Databases (10 points)
 
 An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` tool in `agent.py` and integrate them into your agent.
 
@@ -179,15 +238,7 @@ We will grade your implementation based on the interaction transcript that your 
 Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
-There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
-To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to `api_keys.py`, and enter your own SerpAPI key into the string.
-
-```python
-SERPAPI_API_KEY = ""
-os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
-```
-
-Once you have an API key, you call the web search tool like the following:
+You should have already created a SERPAPI key and added it to `api_keys.py`. Once you have an API key, you call the web search tool like the following:
 
 ```python
 from serpapi import GoogleSearch
@@ -282,7 +333,9 @@ We provide the starter code for the `MemoryTools` class, which includes function
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
 
-2. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
+2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `get_all_memories` (1 line); `store_memory` (1 line)
+
+3. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
 
 To test the agent's memory capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`. After you have implemented both the web search and memory functions, you should end up with an agent that can both handle web searches and remember important user information!
 
