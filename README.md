@@ -10,7 +10,7 @@ The assignment consists of a two parts. In the first part, you will implement th
 By the end of the assignment, you will submit:
 
 - Code file (`agent.py`), which includes implementations for part 1 and 2.
-- A file for the api keys: api_keys.py
+- A file for the api keys: `api_keys.py`
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (`transcript_part1.txt`)
 - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (`transcript_part2.txt`)
 - [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
@@ -63,6 +63,7 @@ To get an API key, you will need to register a free account, click subscribe, th
 SERPAPI_API_KEY = ""
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 ```
+You will get 250 searches with a free account. **We will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment, so ensure you have at least 5 searches left.**
 
 ### Testing API key
 
@@ -350,4 +351,5 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     transcript_part2.txt (you will need to create this text file)
     * any auxiliary code files you created for Part 2
 
-**We will use your serpapi key to run the autograder on your submission for part 2 of the assignment. Make sure to include your key in api_keys.py and make sure to submit api_keys.py as a part of your assignment.** Please make sure that in your serpapi account, you have more than 5 searches left. You can check how many searches you have in your account on the dashboard.
+**As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
+
