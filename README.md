@@ -330,7 +330,7 @@ We provide the starter code for the `MemoryTools` class, which includes function
 
 To test the agent's memory capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`. After you have implemented both the web search and memory functions, you should end up with an agent that can both handle web searches and remember important user information!
 
-This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
+Our starter code provides a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
 ### Transcript and Submission for Part 2
 
