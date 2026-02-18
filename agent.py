@@ -95,33 +95,6 @@ def _generate_id(length=8):
     chars = string.ascii_lowercase + string.digits
     return "".join(random.choices(chars, k=length))
 
-def binarize(ratings, threshold=2.5):
-    """
-    Return a binarized version of the given matrix.
-    To binarize a matrix, replace all entries above the threshold with 1.
-    and replace all entries at or below the threshold with a -1.
-    Entries whose values are 0 represent null values and should remain at 0.
-
-    :param ratings: a (num_movies x num_users) matrix of user ratings, from 0.5 to 5.0
-    :param threshold: Numerical rating above which ratings are considered positive
-    :returns: a binarized version of the movie-rating matrix
-    """
-    
-    ########################################################################
-    # TODO: Binarize the supplied ratings matrix.                          #
-    #                                                                      #
-    # WARNING: Do not use self.ratings directly in this function.          #
-    ########################################################################
-
-    # The starter code returns a new matrix shaped like ratings but full of
-    # zeros.
-    binarized_ratings = np.zeros_like(ratings)
-
-    ########################################################################
-    #                        END OF YOUR CODE                              #
-    ########################################################################
-    return binarized_ratings
-
 def similarity(u, v):
     """
     Calculate the cosine similarity between two vectors.

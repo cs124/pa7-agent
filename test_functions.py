@@ -4,51 +4,7 @@ import argparse
 import unittest.mock as mock
 sys.path.append('.')
 import agent_solution
-from agent import binarize, similarity, recommend_movies
-
-def test_binarize():
-    # Basic case
-    ratings = np.array([
-        [0,   3.0, 2.5],
-        [1.0, 0,   4.5],
-    ])
-    result = binarize(ratings, threshold=2.5)
-    expected = np.array([
-        [0,    1.0, -1.0],
-        [-1.0, 0,   1.0],
-    ])
-    assert np.array_equal(result, expected), f"Basic test failed:\n{result}"
-
-    # Boundary: exactly at threshold → -1
-    ratings = np.array([[2.5, 2.6, 0]])
-    result = binarize(ratings, threshold=2.5)
-    expected = np.array([[-1.0, 1.0, 0]])
-    assert np.array_equal(result, expected), f"Boundary test failed:\n{result}"
-
-    # All zeros → all zeros
-    ratings = np.zeros((3, 3))
-    result = binarize(ratings)
-    assert np.array_equal(result, np.zeros((3, 3))), f"All-zeros test failed:\n{result}"
-
-    # Custom threshold
-    ratings = np.array([[1.0, 3.0, 5.0, 0]])
-    result = binarize(ratings, threshold=3.0)
-    expected = np.array([[-1.0, -1.0, 1.0, 0]])
-    assert np.array_equal(result, expected), f"Custom threshold test failed:\n{result}"
-
-    # Input should not be mutated
-    ratings = np.array([[3.0, 1.0]])
-    original = ratings.copy()
-    binarize(ratings)
-    assert np.array_equal(ratings, original), "Input matrix was mutated!"
-
-    # Output should only contain {-1, 0, 1}
-    ratings = np.array([[0.5, 1.5, 2.5, 3.0, 4.0, 5.0, 0]])
-    result = binarize(ratings)
-    assert set(result.flatten()).issubset({-1.0, 0.0, 1.0}), f"Unexpected values:\n{result}"
-
-    print("All binarize tests passed!")
-
+from agent import similarity, recommend_movies
 
 def test_similarity():
     # Identical vectors → similarity of 1
@@ -152,13 +108,10 @@ def test_recommend_movies():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--function', choices=['binarize', 'similarity', 'recommend_movies'], required=True,
+    parser.add_argument('--function', choices=['similarity', 'recommend_movies'], required=True,
                         help='Which function to test')
     args = parser.parse_args()
-
-    if args.function == 'binarize':
-        test_binarize()
-    elif args.function == 'similarity':
+    if args.function == 'similarity':
         test_similarity()
     elif args.function == 'recommend_movies':
         test_recommend_movies()

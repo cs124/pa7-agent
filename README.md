@@ -18,7 +18,6 @@ By the end of the assignment, you will submit:
 Below is an overview for what you will implement for the assignment:
 
 - Core functions for the movie agent (part 1)
-  - binarize (10 points)
   - similarity (10 points)
   - recommend_movies (10 points)
   - book_ticket (10 points)
@@ -96,15 +95,7 @@ All the code that you will need to write for this assignment will be in `agent.p
 
 ### First Tool: Recommend Movies via Collaborative Filtering (30 points)
 
-One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `binarize`, `similarity`, and `recommend_movies` functions in `agent.py`.
-
-To test the correctness of the `binarize` function, we have provided basic unit tests. You can run it like this:
-
-```python
-python test_functions.py --function binarize
-```
-
-You should expect to see the output "All tests passed for binarized!"
+One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `similarity` and `recommend_movies` functions in `agent.py`.
 
 To test the correctness of the `similarity` function, you can run the following line:
 
