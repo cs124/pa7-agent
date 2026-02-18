@@ -63,6 +63,7 @@ To get an API key, you will need to register a free account, click subscribe, th
 SERPAPI_API_KEY = ""
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 ```
+
 You will get 250 searches with a free account. **We will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment, so ensure you have at least 5 searches left.**
 
 ### Testing API key
@@ -335,7 +336,15 @@ Our starter code provides a minimal demo to illustrate the memory capabilities o
 
 ### Transcript and Submission for Part 2
 
-Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
+Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. Include the following prompts in your submission:
+
+```text
+1. Hi, I'm Alice. Can you remember that I love sci-fi movies.
+2. I'm Alice. What do you remember about my preferred movie genre?
+3. Can you look into what new movie came out in 2026 and recommend a new movie from this month?
+```
+
+To receive full credits, your enhanced agent should call store_memory for prompt 1, search_memories for prompt 2, and web_search for prompt3.
 
 ## EXTRA CREDIT: a new feature of your choice!
 
@@ -352,4 +361,3 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
-
