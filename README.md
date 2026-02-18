@@ -225,7 +225,7 @@ Once you have finished the above, generate a transcript of the agent's conversat
 - print request_database
 ```
 
-Apart from the above transcript, you are also encouraged to add additional user questions that can showcase the use of all the tools you implemented. Make sure that you save the full trajectories of the agent's responses as we showed above in your transcript. Save the transcript as `transcript_part1.txt`.
+Make sure to include the full transcript, instead of just process_result, which should include the full trajectory. Apart from the above transcript, you are also encouraged to add additional user questions that can showcase the use of all the tools you implemented. Make sure that you save the full trajectories of the agent's responses as we showed above in your transcript. Save the transcript as `transcript_part1.txt`.
 
 ## Part 2: Real-World Extensions (50 points)
 
