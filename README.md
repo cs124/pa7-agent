@@ -16,12 +16,12 @@ By the end of the assignment, you will submit:
 Below is an overview for what you will implement for the assignment:
 
 - Core functions for the movie agent (part 1)
-  - similarity (10 points)
-  - recommend_movies (10 points)
-  - book_ticket (10 points)
-- The MovieTicketAgent class (part 1) (10 points)
-- search_memories (part 2) (10 points)
-- The EnhancedMovieTicketAgent class (part 2) (10 points)
+  - `similarity` (10 points)
+  - `recommend_movies` (10 points)
+  - `book_ticket` (10 points)
+- The `MovieTicketAgent` class (part 1) (10 points)
+- `search_memories` (part 2) (10 points)
+- The `EnhancedMovieTicketAgent` class (part 2) (10 points)
 
 ## Important Setup Note
 
@@ -29,32 +29,34 @@ Below is an overview for what you will implement for the assignment:
 
 Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
-- First, activate your cs124 environment. Then, download additional required libraries:
+- (RECOMMENDED) Create a new environment just for PA7:
+  ```
+  conda env create -f environment_pa7.yml
+  conda activate cs124_pa7
+  ```
+
+- Activate your cs124 environment, then, download additional required libraries:
 
   ```
   conda activate cs124
   pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
   ```
 
-- Create a new environment just for PA7:
-  ```
-  conda env create -f environment_pa7.yml
-  conda activate cs124_pa7
-  ```
-
 ### Together API key
 
-Make a new python script called `api_keys.py`. Inside the script, insert your own API key in the string:
+Make a new python script called `api_keys.py`. Inside the script, insert your group's Together API key in the string:
 
     import os
     TOGETHER_API_KEY = ""
     os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 
-IMPORTANT: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run repl.py, the API budget will be reduced. We have provided `api_keys_example.py` -- you can fill in your key and rename the file to `api_keys.py`.
+We have provided a template file called `api_keys_example.py`. You can fill in your key and rename the file to `api_keys.py`.
 
-### SERPAPI Key (for part 2)
+**IMPORTANT**: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run `repl.py`, the API budget will be reduced.
 
-For part 2 of the assignment, you will add search functions to the agent. There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
+### SerpAPI Key (for part 2)
+
+For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
 To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to `api_keys.py`, and enter your own SerpAPI key into the string.
 
 ```python
