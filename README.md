@@ -11,8 +11,6 @@ By the end of the assignment, you will submit:
 
 - Code file (`agent.py`), which includes implementations for part 1 and 2.
 - A file for the api keys: `api_keys.py`
-- A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (`transcript_part1.txt`)
-- A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (`transcript_part2.txt`)
 - [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
 
 Below is an overview for what you will implement for the assignment:
@@ -204,9 +202,9 @@ Printing request_database:
 {'3th6rd': Request(user_request='can you give me a discount on Star Wars: Episode VI - Return of the Jedi?', user_name='')}
 ```
 
-### Transcript and Submission for Part 1
+### Testing Your Code for Part 1
 
-Once you have finished the above, generate a transcript of the agent's conversation with the user covering the following user questions:
+Once you have finished the above, you can test your code with the following user questions:
 
 ```text
 - My name is Peter, recommend 3 movies to me.
@@ -218,7 +216,7 @@ Once you have finished the above, generate a transcript of the agent's conversat
 - print request_database
 ```
 
-Make sure to include the full transcript, instead of just process_result, which should include the full trajectory. Apart from the above transcript, you are also encouraged to add additional user questions that can showcase the use of all the tools you implemented. Make sure that you save the full trajectories of the agent's responses as we showed above in your transcript. Save the transcript as `transcript_part1.txt`.
+You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented.
 
 ## Part 2: Real-World Extensions (50 points)
 
@@ -334,9 +332,9 @@ To test the agent's memory capabilities, replace `react_agent` with `enhanced_ag
 
 Our starter code provides a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
-### Transcript and Submission for Part 2
+### Testing Your Code for Part 2
 
-Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. Include the following prompts in your submission:
+Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested with hidden tests to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
 ```text
 1. Hi, I'm Alice. Can you remember that I love sci-fi movies.
@@ -349,6 +347,31 @@ To receive full credits, your enhanced agent should call store_memory for prompt
 ## EXTRA CREDIT: a new feature of your choice!
 
 Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature besides web search and memory and use `DSPy` to show case the additional feature. Feel free to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
+Here are some examples of ideas you could implement:
+
+- preference elicitation + explanations: instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language
+- error recovery + clarification: when the movie title is ambiguous or doesn't exist in the database, propose alternative candidates and ask for clarification
+- ticket modification/cancellation: add tools to handle ticket rescheduling and cancelling
+- content filtering: group movies by genres and filter out movies outside of the genre
+- spoiler control: avoid providing a summary when the user explicitly states that they do not want spoilers
+
+To submit the extra credit part of the assignment, you will need to submit a video (under 5 minutes) that covers the following components:
+
+- Feature Overview (1-2 minutes)
+  - What feature you implemented
+  - How it improves the Movie Ticket Agent
+  - What problem it solves
+- Technical Implementation (2-3 minutes)
+  - The new tool(s) you added
+  - Any new data structures or databases
+  - How you integrated it into DSPy ReAct
+  - Any changes to agent.py or new files
+- Live Demo in repl.py (1-2 minutes)
+  - run repl.py and demonstrate at least two user interactions
+  - the tool call needs to be successful
+  - show the full trajectory
+
+You will submit the 5-minute video to gain credits for the extra credit part of the assignment.
 
 # Submitting the Assignment
 
@@ -356,8 +379,6 @@ Submit your assignment via Gradescope. We expect the following files in your fin
 
     agent.py
     api_keys.py
-    transcript_part1.txt (you will need to create this text file)
-    transcript_part2.txt (you will need to create this text file)
-    * any auxiliary code files you created for Part 2
+    * any auxiliary code files you created for Part 2 and the video
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
