@@ -14,6 +14,19 @@ from mem0 import Memory
 from datetime import datetime
 import time
 
+def greeting(self):
+    """Return a message that the chatbot uses to greet the user."""
+    ########################################################################
+    # TODO: Write a short greeting message                                 #
+    ########################################################################
+
+    greeting_message = "How can I help you?"
+
+    ########################################################################
+    #                             END OF YOUR CODE                         #
+    ########################################################################
+    return greeting_message
+
 os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 
