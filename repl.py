@@ -59,7 +59,7 @@ class REPL(cmd.Cmd):
     def __init__(self, llm_programming=False, llm_prompting=False):
         super().__init__()
 
-        self.agent = enhanced_agent # TODO: replace with enhanced_agent to test the enhanced agent
+        self.agent = react_agent # TODO: replace with enhanced_agent to test the enhanced agent
         self.name = "Movie Ticket Agent"
         self.bot_prompt = '\001\033[96m\002%s> \001\033[0m\002' % self.name
         self.intro = '\n' + self.bot_prompt + \
