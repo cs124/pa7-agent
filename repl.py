@@ -59,7 +59,7 @@ class REPL(cmd.Cmd):
     def __init__(self, llm_programming=False, llm_prompting=False):
         super().__init__()
 
-        self.agent = react_agent # TODO: replace with enhanced_agent to test the enhanced agent
+        self.agent = enhanced_agent # TODO: replace with enhanced_agent to test the enhanced agent
         self.name = "Movie Ticket Agent"
         self.bot_prompt = '\001\033[96m\002%s> \001\033[0m\002' % self.name
         self.intro = '\n' + self.bot_prompt + \
@@ -114,7 +114,7 @@ class REPL(cmd.Cmd):
             else:
                 print(f"Unknown database: {dbname}")
         else:
-            response = react_agent(user_request=line) # replace with enhanced_agent to test the enhanced agent
+            response = self.agent(user_request=line) 
             print(response)
 
 
