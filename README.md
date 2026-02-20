@@ -280,7 +280,7 @@ In `agent.py`, we provide a helper function `extract_text` and a `WebTools` clas
 
 Your job is to add the relevant tools to the enhanced agent class (`EnhancedMovieTicketAgent`). Specicially, you will need to add web search tools if web search is enabled.
 
-To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`.
+To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in line 62 of `repl.py` before you run `repl.py`.
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
