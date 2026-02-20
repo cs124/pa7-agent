@@ -9,7 +9,7 @@ import numpy as np
 from synthetic_users import SYNTHETIC_USERS
 from typing import Optional
 from serpapi import GoogleSearch
-from bs4 import BeautifulSoups
+from bs4 import BeautifulSoup
 from mem0 import Memory
 from datetime import datetime
 import time
