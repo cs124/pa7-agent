@@ -3,7 +3,7 @@ import sys
 import argparse
 import unittest.mock as mock
 sys.path.append('.')
-import agent_solution
+import agent
 from agent import similarity, recommend_movies
 
 def test_similarity():
