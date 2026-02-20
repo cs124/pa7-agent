@@ -280,7 +280,7 @@ In `agent.py`, we provide a helper function `extract_text` and a `WebTools` clas
 
 Your job is to add the relevant tools to the enhanced agent class (`EnhancedMovieTicketAgent`). Specicially, you will need to add web search tools if web search is enabled.
 
-To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in line 62 of `repl.py` before you run `repl.py`.
+To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in **line 62** of `repl.py` before you run `repl.py`.
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
@@ -384,3 +384,4 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2 and the video
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
+
