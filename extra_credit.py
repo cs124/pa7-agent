@@ -1,5 +1,5 @@
 """
-Extra Credit (Option 1)
+Extra Credit 
 
 In this assignment, you will create your own AI agent using DSPy and any tools/APIs you choose.
 

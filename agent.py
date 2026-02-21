@@ -430,7 +430,7 @@ class MemoryTools:
         except Exception as e:
             return f"Error storing memory: {str(e)}"
 
-    def create_memory(results):
+    def create_memory(self, results):
         """
         Helper function that creates the memory_text string containing all of the memories. You will call this function
         in search_memories and get_all_memories().
@@ -554,6 +554,14 @@ class EnhancedMovieTicketAgent(dspy.Module):
         # TODO: Add tools for web search and memory if they are enabled        #
         ########################################################################
         self.tools = []
+
+        # enable web search
+        if self.web_tools: 
+            # TODO: add web search tool to self.tools
+        
+        # add memory tools if enabled
+        if self.memory_tools:
+            #TODO: add the relevant memory tools here
        
         ########################################################################
         #                          END OF YOUR CODE                            #

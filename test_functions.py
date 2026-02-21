@@ -47,6 +47,15 @@ def test_similarity():
     result = similarity(u, v)
     assert -1.0 <= result <= 1.0, f"Out of range result: {result}"
 
+    # Different-length vectors → should raise ValueError
+    u = np.array([1.0, 2.0, 3.0])
+    v = np.array([1.0, 2.0])
+    try:
+        result = similarity(u, v)
+        assert False, "Different-length vectors test failed: expected ValueError but got result"
+    except ValueError:
+        pass  # expected
+
     print("All similarity tests passed!")
 
 
@@ -102,6 +111,12 @@ def test_recommend_movies():
         with mock.patch.object(agent, 'user_ratings_dict', mock_user_ratings_dict_full):
             result = recommend_movies("alice", k=3)
             assert result == [], f"Expected no recommendations when all movies rated, got {result}"
+
+        # k greater than number of unrated movies: returns only what's available (Movie B and Movie D)
+        result = recommend_movies("alice", k=100)
+        assert len(result) == 2, f"Expected 2 recommendations when k > available movies, got {len(result)}"
+        assert "Movie A" not in result, "Recommended an already-rated movie (Movie A) in large-k test"
+        assert "Movie C" not in result, "Recommended an already-rated movie (Movie C) in large-k test"
 
     print("All recommend_movies tests passed!")
 

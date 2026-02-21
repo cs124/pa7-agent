@@ -30,6 +30,7 @@ Below is an overview for what you will implement for the assignment:
 Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
 - (RECOMMENDED) Create a new environment just for PA7:
+
   ```
   conda env create -f environment_pa7.yml
   conda activate cs124_pa7
@@ -105,7 +106,13 @@ To test the correctness of the `similarity` function, you can run the following 
 python test_functions.py --function similarity
 ```
 
-You should expect to see the output "All tests passed for similarity!"
+You should expect to see the output "All similarity tests passed!". Note that after the output, you might see an Exception like below, which you can ignore:
+
+```python
+Exception ignored in: <function QdrantClient.__del__ at 0x14e6cbe20>
+```
+
+The tests we provide in test_functions.py are not exhaustive, and your functions will be tested on additional hidden tests when you submit your code to the Autograder.
 
 We have included the movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. You can load it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in ratings_matrix (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
 
@@ -169,7 +176,31 @@ Prediction(
 )
 ```
 
-Here we are printing the trajectories including the tool calls and observations. You can see that the agent first recommends 3 movies to the user, and then answers the general question about the plot summary of "Star Wars: Episode VI - Return of the Jedi" by making a tool call to the `general_qa` tool. In your submission, make sure your transcript includes the full trajectories like this too so that we can judge whether your agent made the right tool calls.
+The agent's response is not just a string; instead, it is an object that contains details about the tool calls and reasoning traces for a given user input. Let's walk through what each key in the agent's trajectory means below. The first key is 'thought_0':
+
+```text
+'thought_0': 'I need to recommend 3 movies to Peter. I will use the recommend_movies tool to generate a list of movie titles for him.'
+```
+
+The agent first reasons about the high-level objective of the user query and the relevant tools needed to complete the task. Then, it makes a tool call:
+
+```text
+'tool_name_0': 'recommend_movies', 'tool_args_0': {'user_name': 'Peter', 'k': 3}, 'observation_0': ['Back to the Future (1985)', 'Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)', 'Star Wars: Episode VI - Return of the Jedi (1983)']
+```
+
+From the first thought trace, the agent decides to call the 'recommend_movies' tools. The keys above displays the input to the 'recommend_movies' function, where the two parameters are 'Peter' and 3. The next key 'observation_0' refers to the output of the function, which is a list of movies. Then, the agent reasons about the output:
+
+```text
+'thought_1': 'I have successfully recommended 3 movies to Peter: "Back to the Future", "Raiders of the Lost Ark", and "Star Wars: Episode VI - Return of the Jedi". Now, I will ask Peter if he would like to book a ticket for any of these movies.'
+```
+
+The agent decides that at this point, the task is complete, and no additional tool calls would be necessary, which leads us to the following keys:
+
+```text
+ 'tool_name_1': 'finish', 'tool_args_1': {}, 'observation_1': 'Completed.'
+```
+
+Finally, 'reasoning' provides a summary of the task, and 'process_result' is the user-facing response the agent produces from the series of tool calls and reasoning traces. When you are testing different prompts, make sure to read through the full trajectories to ensure that the agent is making the correct tool calls to reach to the final answers.
 
 ### Interfacing with Databases (10 points)
 
@@ -218,13 +249,12 @@ Once you have finished the above, you can test your code with the following user
 - print request_database
 ```
 
-You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented.
+You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
 
 ## Part 2: Real-World Extensions (50 points)
 
 So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario.
 Your task is to implement functions that could support the following functionalities.
-We will grade your implementation based on the interaction transcript that your agent has with the user.
 
 ### Function 1: Web Search (25 points)
 
@@ -348,10 +378,11 @@ To receive full credits, your enhanced agent should call store_memory for prompt
 
 ## EXTRA CREDIT: a new feature of your choice!
 
-Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature besides web search and memory and use `DSPy` to show case the additional feature. Feel free to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and provide transcripts that illustrate the feature. At the top of your transcript, please explain what feature you were trying to implement.
+Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature and use `DSPy` to show case it. We encourage you to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and record a video to walk through your implementation. The agent does not need to be built on top of the movie recommender agent from previous parts, although you can feel free to add the existing tools you've implemented if they are relevant.
 Here are some examples of ideas you could implement:
 
 - preference elicitation + explanations: instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language
+- personalization: recommend movies based on any movie the user said they liked in the past
 - error recovery + clarification: when the movie title is ambiguous or doesn't exist in the database, propose alternative candidates and ask for clarification
 - ticket modification/cancellation: add tools to handle ticket rescheduling and cancelling
 - content filtering: group movies by genres and filter out movies outside of the genre
@@ -368,6 +399,7 @@ To submit the extra credit part of the assignment, you will need to submit a vid
   - Any new data structures or databases
   - How you integrated it into DSPy ReAct
   - Any changes to agent.py or new files
+  - You will need to walk us through your code
 - Live Demo in repl.py (1-2 minutes)
   - run repl.py and demonstrate at least two user interactions
   - the tool call needs to be successful
@@ -384,4 +416,3 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2 and the video
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
-
