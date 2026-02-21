@@ -16,12 +16,12 @@ By the end of the assignment, you will submit:
 Below is an overview for what you will implement for the assignment:
 
 - Core functions for the movie agent (part 1)
-  - `similarity` (10 points)
-  - `recommend_movies` (10 points)
-  - `book_ticket` (10 points)
-- The `MovieTicketAgent` class (part 1) (10 points)
-- `search_memories` (part 2) (10 points)
-- The `EnhancedMovieTicketAgent` class (part 2) (10 points)
+  - `similarity` (6 points)
+  - `recommend_movies` (15 points)
+  - `book_ticket` (20 points)
+- The `MovieTicketAgent` class (part 1) (27 points)
+- `MemoryTools` class (part 2) (24 points)
+- `EnhancedMovieTicketAgent` class (part 2) (8 points)
 
 ## Important Setup Note
 
