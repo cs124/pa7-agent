@@ -11,7 +11,7 @@ By the end of the assignment, you will submit:
 
 - Code file (`agent.py`), which includes implementations for part 1 and 2.
 - A file for the api keys: `api_keys.py`
-- [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a transcript `extra_credit_transcript.txt`
+- [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a 5-minute video.
 
 Below is an overview for what you will implement for the assignment:
 
@@ -33,7 +33,7 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
   ```
   conda env create -f environment_pa7.yml
-  conda activate cs124_pa7
+  conda activate environment_pa7
   ```
 
 - Activate your cs124 environment, then, download additional required libraries:
@@ -45,20 +45,14 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
 ### Together API key
 
-Make a new python script called `api_keys.py`. Inside the script, insert your group's Together API key in the string:
-
-    import os
-    TOGETHER_API_KEY = ""
-    os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
-
-We have provided a template file called `api_keys_example.py`. You can fill in your key and rename the file to `api_keys.py`.
+We have provided a template file called `api_keys_example.py`. You can fill in your TOGETHER AI key and rename the file to `api_keys.py`.
 
 **IMPORTANT**: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run `repl.py`, the API budget will be reduced.
 
 ### SerpAPI Key (for part 2)
 
 For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
-To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please add the following lines to `api_keys.py`, and enter your own SerpAPI key into the string.
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter your own SerpAPI key into the string in "api_keys.py".
 
 ```python
 SERPAPI_API_KEY = ""
@@ -94,9 +88,9 @@ You can type your message in the prompt to the movie agent, and hit enter. To ex
 
 All the code that you will need to write for this assignment will be in `agent.py`. We will describe the components that you will need to implement in the next sections.
 
-## Part 1: Basic Tool-Use Agent (50 points)
+## Part 1: Basic Tool-Use Agent (68 points)
 
-### First Tool: Recommend Movies via Collaborative Filtering (30 points)
+### First Tool: Recommend Movies via Collaborative Filtering (21 points)
 
 One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `similarity` and `recommend_movies` functions in `agent.py`.
 
@@ -131,7 +125,7 @@ recommend_movies("Peter", 3)
 
 You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. And we can see that the result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`.
 
-### Integrating Tools into an LLM Agent (10 points)
+### Integrating Tools into an LLM Agent (27 points)
 
 Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the recommend_movies tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call file_request if the existing functions cannot handle the request.
 
@@ -202,7 +196,7 @@ The agent decides that at this point, the task is complete, and no additional to
 
 Finally, 'reasoning' provides a summary of the task, and 'process_result' is the user-facing response the agent produces from the series of tool calls and reasoning traces. When you are testing different prompts, make sure to read through the full trajectories to ensure that the agent is making the correct tool calls to reach to the final answers.
 
-### Interfacing with Databases (10 points)
+### Interfacing with Databases (20 points)
 
 An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` tool in `agent.py` and integrate them into your agent.
 
@@ -251,12 +245,12 @@ Once you have finished the above, you can test your code with the following user
 
 You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
 
-## Part 2: Real-World Extensions (50 points)
+## Part 2: Real-World Extensions (32 points)
 
 So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario.
 Your task is to implement functions that could support the following functionalities.
 
-### Function 1: Web Search (25 points)
+### Function 1: Web Search (8 points)
 
 Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
@@ -314,7 +308,7 @@ To test the agent's search capabilities, replace `react_agent` with `enhanced_ag
 
 To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
 
-### Function 2: Memory (25 points)
+### Function 2: Memory (24 points)
 
 You might notice that the current agent is stateless: it doesn't remember past interactions with the user and you have to explain who you are at every interaction.
 Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
@@ -354,7 +348,7 @@ memory_config = {
 
 We provide the starter code for the `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, your job is as follows:
 
-1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0.
+1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0. You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
 
 2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `get_all_memories` (1 line); `store_memory` (1 line)
 
@@ -369,16 +363,19 @@ Our starter code provides a minimal demo to illustrate the memory capabilities o
 Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested with hidden tests to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
 ```text
-1. Hi, I'm Alice. Can you remember that I love sci-fi movies.
-2. I'm Alice. What do you remember about my preferred movie genre?
-3. Can you look into what new movie came out in 2026 and recommend a new movie from this month?
+1. Please search the web to tell me who played Lucy in "Materialists"
+2. Please search the web to tell me who directed "Wicked: For Good"
+3. Please remember that my favorite movie is "The Matrix"
+4. What is my favorite movie?
+5. Please remember that I watched my first sci-fi movie when I was 6 years old
+6. When did I watch my first sci-fi movie?
 ```
 
-To receive full credits, your enhanced agent should call store_memory for prompt 1, search_memories for prompt 2, and web_search for prompt3.
+For each prompt, you will be graded on both whether the agent correctly calls the relevant tools, as well as whether the final outputs are correct.
 
 ## EXTRA CREDIT: a new feature of your choice!
 
-Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature and use `DSPy` to show case it. We encourage you to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and record a video to walk through your implementation. The agent does not need to be built on top of the movie recommender agent from previous parts, although you can feel free to add the existing tools you've implemented if they are relevant.
+Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature and incorporate it in `DSPy`. We encourage you to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and record a 5-minute video to walk through your implementation. The agent does not need to be built on top of the movie recommender agent from previous parts, although you can feel free to add the existing tools you've implemented if they are relevant.
 Here are some examples of ideas you could implement:
 
 - preference elicitation + explanations: instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language

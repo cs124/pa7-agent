@@ -60,7 +60,7 @@ class Movie(BaseModel):
 class Ticket(BaseModel):
     user_name: str
     movie_title: str
-    start_time: Date
+    time: Date
 
 class Request(BaseModel):
     user_request: str
