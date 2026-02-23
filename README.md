@@ -23,6 +23,15 @@ Below is an overview for what you will implement for the assignment:
 - `MemoryTools` class (part 2) (24 points)
 - `EnhancedMovieTicketAgent` class (part 2) (8 points)
 
+## Cloning the assignment
+
+Open your terminal. First, navigate into the folder in which you want to put the PA7 assignment folder. Then, clone the assignment.
+
+```
+cd folder/to/put/assignment
+git clone https://github.com/cs124/pa7-agent.git
+```
+
 ## Important Setup Note
 
 ### Environment
@@ -33,7 +42,7 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
   ```
   conda env create -f environment_pa7.yml
-  conda activate environment_pa7
+  conda activate cs124_pa7
   ```
 
 - Activate your cs124 environment, then, download additional required libraries:
@@ -413,3 +422,4 @@ Submit your assignment via Gradescope. We expect the following files in your fin
     * any auxiliary code files you created for Part 2 and the video
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
+
