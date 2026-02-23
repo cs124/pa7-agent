@@ -13,16 +13,6 @@ By the end of the assignment, you will submit:
 - A file for the api keys: `api_keys.py`
 - [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a 5-minute video.
 
-Below is an overview for what you will implement for the assignment:
-
-- Core functions for the movie agent (part 1)
-  - `similarity` (6 points)
-  - `recommend_movies` (15 points)
-  - `book_ticket` (20 points)
-- The `MovieTicketAgent` class (part 1) (27 points)
-- `MemoryTools` class (part 2) (24 points)
-- `EnhancedMovieTicketAgent` class (part 2) (8 points)
-
 ## Cloning the assignment
 
 Open your terminal. First, navigate into the folder in which you want to put the PA7 assignment folder. Then, clone the assignment.
@@ -58,7 +48,7 @@ We have provided a template file called `api_keys_example.py`. You can fill in y
 
 **IMPORTANT**: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run `repl.py`, the API budget will be reduced.
 
-### SerpAPI Key (for part 2)
+### SerpAPI Key (for Part 2)
 
 For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
 To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter your own SerpAPI key into the string in "api_keys.py".
@@ -132,7 +122,7 @@ recommend_movies("Peter", 3)
 ['Back to the Future (1985)', 'Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)', 'Star Wars: Episode VI - Return of the Jedi (1983)']
 ```
 
-You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. And we can see that the result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`.
+You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. We can see that this result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`. Additional test cases can be found in the [rubric](https://docs.google.com/spreadsheets/d/1tYNSIUtir-gX2Q3sRqZaFc3ufVWdZbpRoUr1Lu_hIJI/edit?gid=2094045160#gid=2094045160). 
 
 ### Integrating Tools into an LLM Agent (27 points)
 
@@ -245,11 +235,12 @@ Once you have finished the above, you can test your code with the following user
 ```text
 - My name is Peter, recommend 3 movies to me.
 - recommend 5 movies to Amy please
+- hi im jake can you recommend me 2 movies
 - Give me a plot summary for "Lord of the Rings: The Two Towers"
 - Book a ticket for Peter for Lord of the Rings: The Two Towers
 - print ticket_database
-- My name is Peter. Can you give me a discount on Lord of the Rings: The Two Towers?
-- print request_database
+- Book one ticket for Peter for Back to the Future and one for Star Wars: Episode VI - Return of the Jedi
+- print ticket_database
 ```
 
 You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
@@ -369,15 +360,15 @@ Our starter code provides a minimal demo to illustrate the memory capabilities o
 
 ### Testing Your Code for Part 2
 
-Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested with hidden tests to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
+Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. As noted in Part 1, LLM outputs can be non-deterministic and occasionally truncated due to token limits. Don’t worry if this happens—we’ll take it into account during grading.
 
 ```text
-1. Please search the web to tell me who played Lucy in "Materialists"
-2. Please search the web to tell me who directed "Wicked: For Good"
-3. Please remember that my favorite movie is "The Matrix"
-4. What is my favorite movie?
-5. Please remember that I watched my first sci-fi movie when I was 6 years old
-6. When did I watch my first sci-fi movie?
+- Please search the web to tell me who played Lucy in "Materialists"
+- Please search the web to tell me who directed "Wicked: For Good"
+- Please remember that my favorite movie is "The Matrix"
+- What is my favorite movie?
+- Please remember that I watched my first sci-fi movie when I was 6 years old
+- When did I watch my first sci-fi movie?
 ```
 
 For each prompt, you will be graded on both whether the agent correctly calls the relevant tools, as well as whether the final outputs are correct.
@@ -423,3 +414,15 @@ Submit your assignment via Gradescope. We expect the following files in your fin
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
 
+### Autograding vs LLM grading vs Manual grading
+
+In the spirit of using LLMs for programming, we are using LLM grading on this assignment! Just as we auto-graded all of your previous assignments in Python, we will be auto-grading this assignment—just this time with Python and LLMs. Unfortunately, all autograders have bugs, and LLM autograders are no exception. That being said, we will be extra cautious about LLM errors. If the LLM docks *any* points, we will have our human CAs come in and double-check.
+
+We want to be completely transparent about our LLM grading!  Check out the prompts we are using [here](https://docs.google.com/document/d/1LLEhSCbJ0y9mEi909QXMB7rQJr2eymk37Ts_DCiJUnI/edit?tab=t.0#heading=h.amfavasmxpg7). 
+
+The python autograder will test and grade each function in the [rubric](https://docs.google.com/spreadsheets/d/1tYNSIUtir-gX2Q3sRqZaFc3ufVWdZbpRoUr1Lu_hIJI/edit?gid=1408405358#gid=1408405358) except the ones highlighted in red. The tasks highlighted in red will first be graded by an LLM (Mixtral 8x7B to be precise!)  If the LLM takes off *any* points it will go to our CAs for manual review.
+
+## Links to resources
+
+* Rubric: https://docs.google.com/spreadsheets/d/1tYNSIUtir-gX2Q3sRqZaFc3ufVWdZbpRoUr1Lu_hIJI/edit?gid=1408405358#gid=1408405358
+* How the Autograder Works: https://docs.google.com/document/d/1LLEhSCbJ0y9mEi909QXMB7rQJr2eymk37Ts_DCiJUnI/edit?tab=t.0#heading=h.amfavasmxpg7
