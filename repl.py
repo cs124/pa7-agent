@@ -56,7 +56,7 @@ class REPL(cmd.Cmd):
     undoc_header = ''
     ruler = '-'
 
-    def __init__(self, llm_programming=False, llm_prompting=False):
+    def __init__(self):
         super().__init__()
 
         self.agent = react_agent # TODO: replace with enhanced_agent to test the enhanced agent

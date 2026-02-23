@@ -44,18 +44,22 @@ Although this assignment mostly reuses the environment you set up in PA0, we nee
 
 ### Together API key
 
-We have provided a template file called `api_keys_example.py`. You can fill in your TOGETHER AI key and rename the file to `api_keys.py`.
+Your group should have created a Together AI account. Navigate into that account and find the associated API key. (If you are on the limited billing tier, you may have to add some payment information to be able to access it.) 
+
+We have provided a template file called `api_keys_example.py`. You can fill in your key into the corresponding string and rename the file to `api_keys.py`.
+
+```
+TOGETHER_API_KEY = "enter your api key here"
+```
 
 **IMPORTANT**: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run `repl.py`, the API budget will be reduced.
 
 ### SerpAPI Key (for Part 2)
 
 For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
-To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter your own SerpAPI key into the string in "api_keys.py".
-
-```python
-SERPAPI_API_KEY = ""
-os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
+To get an API key, one group member will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter it into the string in `api_keys.py`:
+```
+SERPAPI_API_KEY = "enter your api key here"
 ```
 
 You will get 250 searches with a free account. **We will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment, so ensure you have at least 5 searches left.**
@@ -87,13 +91,37 @@ You can type your message in the prompt to the movie agent, and hit enter. To ex
 
 All the code that you will need to write for this assignment will be in `agent.py`. We will describe the components that you will need to implement in the next sections.
 
+## Assignment Outline
+
+- [Part 1: Basic Tool-Use Agent](#part-1-basic-tool-use-agent-68-points)
+  - [First Tool: Recommend Movies via Collaborative Filtering](#first-tool-recommend-movies-via-collaborative-filtering-21-points)
+  - [Integrating Tools into an LLM Agent](#integrating-tools-into-an-llm-agent-27-points)
+    - [Note on DSPy agent response object](#note-on-dspy-agent-response-object)
+  - [Interfacing with Databases](#interfacing-with-databases-20-points)
+  - [Testing Your Code for Part 1](#testing-your-code-for-part-1)
+  - [Note on testing and agent nondeterminism](#note-on-testing-and-agent-nondeterminism)
+
+- [Part 2: Real-World Extensions](#part-2-real-world-extensions-32-points)
+  - [Function 1: Web Search](#function-1-web-search-8-points)
+  - [Function 2: Memory](#function-2-memory-24-points)
+  - [Testing Your Code for Part 2](#testing-your-code-for-part-2)
+
+- [Part 3: Reflection](#part-3-reflection-6-points)
+
+- [EXTRA CREDIT: a new feature of your choice!](#extra-credit-a-new-feature-of-your-choice)
+
+- [Submitting the Assignment](#submitting-the-assignment)
+  - [Autograding vs LLM grading vs Manual grading](#autograding-vs-llm-grading-vs-manual-grading)
+
+- [Links to resources](#links-to-resources)
+
 ## Part 1: Basic Tool-Use Agent (68 points)
 
 ### First Tool: Recommend Movies via Collaborative Filtering (21 points)
 
 One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `similarity` and `recommend_movies` functions in `agent.py`.
 
-To test the correctness of the `similarity` function, you can run the following line:
+We provide a spot check for the correctness of the `similarity` function. You can run the following command:
 
 ```python
 python test_functions.py --function similarity
@@ -101,15 +129,15 @@ python test_functions.py --function similarity
 
 You should expect to see the output "All similarity tests passed!". Note that after the output, you might see an Exception like below, which you can ignore:
 
-```python
+```text
 Exception ignored in: <function QdrantClient.__del__ at 0x14e6cbe20>
 ```
 
-The tests we provide in test_functions.py are not exhaustive, and your functions will be tested on additional hidden tests when you submit your code to the Autograder.
+The spot checks we provide in `test_functions.py` are not exhaustive, and your functions will be tested on additional hidden tests when you submit your code to Gradescope.
 
-We have included the movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. You can load it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in ratings_matrix (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
+We have included the movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. You can load it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in `ratings_matrix` (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
 
-To test the correctness of the `recommend_movies` function, you can run the following line:
+To spot-check the correctness of the `recommend_movies` function, you can run the following line:
 
 ```python
 python test_functions.py --function recommend_movies
@@ -126,7 +154,7 @@ You should expect your list of movies to match exactly the ones in the example a
 
 ### Integrating Tools into an LLM Agent (27 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the recommend_movies tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call file_request if the existing functions cannot handle the request.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the `DSPy` library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the `recommend_movies` tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call `file_request` if the existing functions cannot handle the request.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
@@ -146,9 +174,11 @@ react_agent = dspy.ReAct(
 )
 ```
 
+#### Note on `DSPy` agent response object
+
 You can then run the REPL script to see your agent in action: `python repl.py`.
 
-You should expect to see your agent making tool calls to the `recommend_movies` function and answering general questions about the movie ticket agent. Here is an example of what you should expect to see:
+You should expect to see your agent making tool calls to the `recommend_movies` function, in addition to answering general questions about the movie ticket agent. Here is an example of what you should expect to see:
 
 ```text
 Movie Ticket Agent> Hello! I'm the Movie Ticket Agent. How can I help you today?
@@ -243,6 +273,8 @@ Once you have finished the above, you can test your code with the following user
 - print ticket_database
 ```
 
+### Note on testing and agent nondeterminism
+
 You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
 
 ## Part 2: Real-World Extensions (32 points)
@@ -255,7 +287,7 @@ Your task is to implement functions that could support the following functionali
 Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
-You should have already created a SERPAPI key and added it to `api_keys.py`. Once you have an API key, you call the web search tool like the following:
+The agent's web search tool (which is mostly implemented for you in `agent.py`) looks like the following:
 
 ```python
 from serpapi import GoogleSearch
@@ -279,8 +311,6 @@ links = [
     if item.get("link")
 ]
 ```
-
-You might want to handle pagination of the results too if the results are too many.
 
 Once you get a link, you can read its content with tools like BeautifulSoup:
 
@@ -373,17 +403,21 @@ Similar to Part 1, you can use the example queries below as well as additional u
 
 For each prompt, you will be graded on both whether the agent correctly calls the relevant tools, as well as whether the final outputs are correct.
 
+## Part 3: Reflection (6 points)
+
+For this part of the assignment, please answer the reflection questions in the Gradescope assignment titled "PA7 - Reflection".
+
 ## EXTRA CREDIT: a new feature of your choice!
 
 Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature and incorporate it in `DSPy`. We encourage you to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and record a 5-minute video to walk through your implementation. The agent does not need to be built on top of the movie recommender agent from previous parts, although you can feel free to add the existing tools you've implemented if they are relevant.
 Here are some examples of ideas you could implement:
 
-- preference elicitation + explanations: instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language
-- personalization: recommend movies based on any movie the user said they liked in the past
-- error recovery + clarification: when the movie title is ambiguous or doesn't exist in the database, propose alternative candidates and ask for clarification
-- ticket modification/cancellation: add tools to handle ticket rescheduling and cancelling
-- content filtering: group movies by genres and filter out movies outside of the genre
-- spoiler control: avoid providing a summary when the user explicitly states that they do not want spoilers
+- **preference elicitation + explanations:** instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language
+- **personalization:** recommend movies based on any movie the user said they liked in the past
+- **error recovery + clarification:** when the movie title is ambiguous or doesn't exist in the database, propose alternative candidates and ask for clarification
+- **ticket modification/cancellation:** add tools to handle ticket rescheduling and cancelling
+- **content filtering:** group movies by genres and filter out movies outside of the genre
+- **spoiler control:** avoid providing a summary when the user explicitly states that they do not want spoilers
 
 To submit the extra credit part of the assignment, you will need to submit a video (under 5 minutes) that covers the following components:
 
@@ -397,8 +431,8 @@ To submit the extra credit part of the assignment, you will need to submit a vid
   - How you integrated it into DSPy ReAct
   - Any changes to agent.py or new files
   - You will need to walk us through your code
-- Live Demo in repl.py (1-2 minutes)
-  - run repl.py and demonstrate at least two user interactions
+- Live Demo in `repl.py` (1-2 minutes)
+  - run `repl.py` and demonstrate at least two user interactions
   - the tool call needs to be successful
   - show the full trajectory
 
@@ -406,11 +440,15 @@ You will submit the 5-minute video to gain credits for the extra credit part of 
 
 # Submitting the Assignment
 
-Submit your assignment via Gradescope. We expect the following files in your final submission:
-
+Note that there are three Gradescope assignments for PA7. Each group should make only one submission and add all of their group members to the submission.
+- **PA7 - Code:** You should submit the following files:
+    ```
     agent.py
     api_keys.py
-    * any auxiliary code files you created for Part 2 and the video
+    * any auxiliary code files you created for Part 2 and extra credit
+    ```
+- **PA7 - Reflection:** You should answer the short answer questions
+- **PA7 - Extra Credit:** You should submit your 5-minute video here if your group is attempting the extra credit. Please submit a link to your video. If you wish to submit a Google Drive link, please make sure that the link has viewing permissions.
 
 **As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.
 
