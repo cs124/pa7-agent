@@ -1,49 +1,120 @@
-# Programming Assignment 7: Agent! 
+# Programming Assignment 7: Agent!
 
 **Late days CANNOT be used on this assignment. Please submit early and often to avoid last minute submission issues!**
 
-**You should work in groups of 3 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
+**You should work in groups of 3-4 members. (To work in a group of size 2, you must get special permission from the staff.) All submissions will be graded according to the same criteria, regardless of group size.**
 
 In this assignment you will build a customer service agent that can help with movie ticket bookings and other movie-related requests.
-The assignment consists of a compulsory part on implementing the collaborative filtering algorithm to recommend movies to the user, and an open-ended part on implementing an LLM agent that can make tool calls, where you are encouraged to be creative and implement interesting functions and tools for the agent to use.
+The assignment consists of a two parts. In the first part, you will implement the collaborative filtering algorithm to recommend movies to the user. In the second part, you will implement an LLM agent that can make tool calls to take on web search and memory functionalities.
 
+By the end of the assignment, you will submit:
 
-By the end of the assignment, you will submit: 
+- Code file (`agent.py`), which includes implementations for part 1 and 2.
+- A file for the api keys: `api_keys.py`
+- [extra credit]: If you want to attempt the extra credit part of the assignment, you will submit your implementation in extra_credit.py along with a 5-minute video.
 
- - Code file (`agent.py`) for Part 1
- - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 1 (transcript_part1.txt)
- - Your implementation for Part 2, preferably in the same file (`agent.py`), but if necessary, you can create a new file for it to break things down and upload all the agent-related files 
- - A text file showing a full transcript of the agent's conversation with the user covering all the features you implemented for Part 2 (transcript_part2.txt)
+Below is an overview for what you will implement for the assignment:
 
- ## Important Setup Note
+- Core functions for the movie agent (part 1)
+  - `similarity` (6 points)
+  - `recommend_movies` (15 points)
+  - `book_ticket` (20 points)
+- The `MovieTicketAgent` class (part 1) (27 points)
+- `MemoryTools` class (part 2) (24 points)
+- `EnhancedMovieTicketAgent` class (part 2) (8 points)
 
-Although this assignment mostly reuses the environment you set up in PA0, we need one additional package.  Recall to activate your PA0 environment you will use:
+## Important Setup Note
 
-    conda activate cs124
+### Environment
 
-Please run this command after activating your cs124 environment. We will be using the dspy library to build our agent to make tool calling easier.
+Although this assignment mostly reuses the environment you set up in PA0, we need one additional package. You have two options to setup the new environment:
 
-    pip install -U dspy
+- (RECOMMENDED) Create a new environment just for PA7:
 
+  ```
+  conda env create -f environment_pa7.yml
+  conda activate environment_pa7
+  ```
+
+- Activate your cs124 environment, then, download additional required libraries:
+
+  ```
+  conda activate cs124
+  pip install -U dspy together beautifulsoup4 mem0ai serpapi google-search-results
+  ```
+
+### Together API key
+
+We have provided a template file called `api_keys_example.py`. You can fill in your TOGETHER AI key and rename the file to `api_keys.py`.
+
+**IMPORTANT**: Each group has a limited amount of API credit, and you should budget your usage accordingly. We recommend that you test your functions individually to minimize the amount of API calls you make. Every time you run `repl.py`, the API budget will be reduced.
+
+### SerpAPI Key (for part 2)
+
+For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
+To get an API key, you will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter your own SerpAPI key into the string in "api_keys.py".
+
+```python
+SERPAPI_API_KEY = ""
+os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
+```
+
+You will get 250 searches with a free account. **We will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment, so ensure you have at least 5 searches left.**
+
+### Testing API key
+
+It is important to ensure that your API keys work as intended. To confirm that the API keys are working, you can run the following line:
+
+```python
+python test_api_keys.py
+```
+
+You should see the following three print statements:
+
+```python
+Keys are non-empty.
+Together API key works!
+SerpAPI key works!
+```
 
 ## Starter Code
 
-We have provided an interface code file for you: `repl.py`. It's a common pattern in software engineering known as the Read-Eval-Print-Loop, REPL. The REPL creates a prompt that gets an input string from the user. Then the REPL passes the input to an agent class that is responsible for doing the work. The response generated by the agent class is then handled again by the REPL, which prints the response and waits for more input. 
+We have provided an interface code file for you: `repl.py`. It's a common pattern in software engineering known as the Read-Eval-Print-Loop, or REPL for short. The REPL creates a prompt that gets an input string from the user. Then the REPL passes the input to an agent class that is responsible for doing the work. The response generated by the agent class is then handled again by the REPL, which prints the response and waits for more input.
 
 In the starter code folder, fire up the REPL by issuing the following command:
-`python3 repl.py`
+`python repl.py`
 
-You can type your message in the prompt to the movie agent, and hit enter. To exit the REPL, write `:quit`. 
+You can type your message in the prompt to the movie agent, and hit enter. To exit the REPL, write `:quit`.
 
 All the code that you will need to write for this assignment will be in `agent.py`. We will describe the components that you will need to implement in the next sections.
 
-## Assignment Part 1: Basic Tool-Use Agent (50 points)
+## Part 1: Basic Tool-Use Agent (68 points)
 
-### First Tool: Recommend Movies via Collaborative Filtering (25 points)
+### First Tool: Recommend Movies via Collaborative Filtering (21 points)
 
-One of the core functions that your agent has to support is to recommend movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `binarize`, `similarity`, and `recommend_movies` functions in `agent.py`.
+One of the core functions that your agent has to support is recommending movies to the user. This is a classic problem in recommender systems, and we will use the collaborative filtering algorithm to solve it. Specifically, you will need to implement the `similarity` and `recommend_movies` functions in `agent.py`.
 
-We have included the movie ratings matrix in `data/ratings.txt`. You can load it using the `util.load_ratings` function. Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity with no mean-centering or normalization of scores.
+To test the correctness of the `similarity` function, you can run the following line:
+
+```python
+python test_functions.py --function similarity
+```
+
+You should expect to see the output "All similarity tests passed!". Note that after the output, you might see an Exception like below, which you can ignore:
+
+```python
+Exception ignored in: <function QdrantClient.__del__ at 0x14e6cbe20>
+```
+
+The tests we provide in test_functions.py are not exhaustive, and your functions will be tested on additional hidden tests when you submit your code to the Autograder.
+
+We have included the movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. You can load it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in ratings_matrix (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
+
+To test the correctness of the `recommend_movies` function, you can run the following line:
+
+```python
+python test_functions.py --function recommend_movies
+```
 
 Here is an example of what you should expect to see when you run the REPL:
 
@@ -54,14 +125,17 @@ recommend_movies("Peter", 3)
 
 You should expect your list of movies to match exactly the ones in the example above if you implement the function correctly. And we can see that the result makes sense because Peter is a sci-fi fan based on his profile in `synthetic_users.py`.
 
+### Integrating Tools into an LLM Agent (27 points)
 
-### Integrating Tools into an LLM Agent (5 points)
-
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the dspy library to build our agent to make tool calling easier.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the DSPy library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the recommend_movies tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call file_request if the existing functions cannot handle the request.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
-To add these tools to your agent, you can simply add them to the `tools` list in the `react_agent` variable. Dspy will automatically implement the ReAct framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
+You have two tasks:
+
+1. Flesh out the agent objective in the docstring of the `MovieTicketAgent` class in `agent.py`.
+
+2. Add necessary tools to your agent by adding them to the `tools` list in the `react_agent` variable. `DSPy` will automatically implement the `ReAct` framework for you (based on https://arxiv.org/abs/2210.03629) to interleave reasoning and tool calls.
 
 ```python
 react_agent = dspy.ReAct(
@@ -73,14 +147,14 @@ react_agent = dspy.ReAct(
 )
 ```
 
-You can then run the REPL script to see your agent in action: `python3 repl.py`.
+You can then run the REPL script to see your agent in action: `python repl.py`.
 
 You should expect to see your agent making tool calls to the `recommend_movies` function and answering general questions about the movie ticket agent. Here is an example of what you should expect to see:
 
 ```text
 Movie Ticket Agent> Hello! I'm the Movie Ticket Agent. How can I help you today?
 > My name is Peter, recommend 3 movies to me.
-Movie Ticket Agent> 
+Movie Ticket Agent>
 Prediction(
     trajectory={'thought_0': 'I need to recommend 3 movies to Peter. I will use the recommend_movies tool to generate a list of movie titles for him.', 'tool_name_0': 'recommend_movies', 'tool_args_0': {'user_name': 'Peter', 'k': 3}, 'observation_0': ['Back to the Future (1985)', 'Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)', 'Star Wars: Episode VI - Return of the Jedi (1983)'], 'thought_1': 'I have successfully recommended 3 movies to Peter: "Back to the Future", "Raiders of the Lost Ark", and "Star Wars: Episode VI - Return of the Jedi". Now, I will ask Peter if he would like to book a ticket for any of these movies.', 'tool_name_1': 'finish', 'tool_args_1': {}, 'observation_1': 'Completed.'},
     reasoning='I recommended 3 classic movies to Peter based on his request. The movies are "Back to the Future," "Raiders of the Lost Ark," and "Star Wars: Episode VI - Return of the Jedi." I have completed the recommendation process and am ready to assist him further if he wishes to book a ticket for any of these films.',
@@ -88,7 +162,7 @@ Prediction(
 )
 
 > give me a plot summary for "Star Wars: Episode VI - Return of the Jedi"
-Movie Ticket Agent> 
+Movie Ticket Agent>
 Prediction(
     trajectory={'thought_0': 'The user is asking for a plot summary of "Star Wars: Episode VI - Return of the Jedi." Since this request does not involve booking tickets or any other specific action related to movie tickets, I will use the general question answering tool to provide the plot summary.', 'tool_name_0': 'general_qa', 'tool_args_0': {'user_request': 'give me a plot summary for "Star Wars: Episode VI - Return of the Jedi"'}, 'observation_0': ['"Star Wars: Episode VI - Return of the Jedi" follows the Rebel Alliance\'s final efforts to defeat the Galactic Empire. The film opens with Luke Skywalker, now a Jedi Knight, attempting to rescue Han Solo from the clutches of the crime lord Jabba the Hutt. After a daring rescue, Luke reunites with his friends Leia Organa, Han, and the droids C-3PO and R2-D2.\n\nMeanwhile, the Empire is constructing a new Death Star, even more powerful than the first. The Rebels learn of this and plan an assault to destroy it. Luke confronts Darth Vader, hoping to redeem his father and bring him back to the light side of the Force. The Emperor, aware of Luke\'s potential, seeks to turn him to the dark side.\n\nAs the Rebel fleet engages the Empire in a massive space battle, Luke faces the Emperor and Vader on the Death Star. In a climactic moment, Vader ultimately chooses to save his son, killing the Emperor and sacrificing himself in the process. The Death Star is destroyed, and the Rebels celebrate their victory, marking the fall of the Empire and the restoration of peace to the galaxy. The film concludes with a sense of hope and renewal, as the heroes reflect on their journey and the future ahead.'], 'thought_1': 'I have successfully provided the user with a plot summary for "Star Wars: Episode VI - Return of the Jedi." Since the user\'s request has been fulfilled, I can now mark the task as complete.', 'tool_name_1': 'finish', 'tool_args_1': {}, 'observation_1': 'Completed.'},
     reasoning='The user requested a plot summary for "Star Wars: Episode VI - Return of the Jedi." I utilized the general question answering tool to provide a detailed summary of the film\'s plot, covering key events and character arcs, which successfully addressed the user\'s request.',
@@ -96,11 +170,35 @@ Prediction(
 )
 ```
 
-Here we are printing the trajectories including the tool calls and observations. You can see that the agent first recommends 3 movies to the user, and then answers the general question about the plot summary of "Star Wars: Episode VI - Return of the Jedi" by making a tool call to the `general_qa` tool. In your submission, make sure your transcript includes the full trajectories like this too so that we can judge whether your agent made the right tool calls.
+The agent's response is not just a string; instead, it is an object that contains details about the tool calls and reasoning traces for a given user input. Let's walk through what each key in the agent's trajectory means below. The first key is 'thought_0':
+
+```text
+'thought_0': 'I need to recommend 3 movies to Peter. I will use the recommend_movies tool to generate a list of movie titles for him.'
+```
+
+The agent first reasons about the high-level objective of the user query and the relevant tools needed to complete the task. Then, it makes a tool call:
+
+```text
+'tool_name_0': 'recommend_movies', 'tool_args_0': {'user_name': 'Peter', 'k': 3}, 'observation_0': ['Back to the Future (1985)', 'Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)', 'Star Wars: Episode VI - Return of the Jedi (1983)']
+```
+
+From the first thought trace, the agent decides to call the 'recommend_movies' tools. The keys above displays the input to the 'recommend_movies' function, where the two parameters are 'Peter' and 3. The next key 'observation_0' refers to the output of the function, which is a list of movies. Then, the agent reasons about the output:
+
+```text
+'thought_1': 'I have successfully recommended 3 movies to Peter: "Back to the Future", "Raiders of the Lost Ark", and "Star Wars: Episode VI - Return of the Jedi". Now, I will ask Peter if he would like to book a ticket for any of these movies.'
+```
+
+The agent decides that at this point, the task is complete, and no additional tool calls would be necessary, which leads us to the following keys:
+
+```text
+ 'tool_name_1': 'finish', 'tool_args_1': {}, 'observation_1': 'Completed.'
+```
+
+Finally, 'reasoning' provides a summary of the task, and 'process_result' is the user-facing response the agent produces from the series of tool calls and reasoning traces. When you are testing different prompts, make sure to read through the full trajectories to ensure that the agent is making the correct tool calls to reach to the final answers.
 
 ### Interfacing with Databases (20 points)
 
-An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` and `file_request` tools in `agent.py` and integrate them into your agent.
+An important part of building a customer service agent is to be able to interface with databases to gather and record information about the user and the movies. As a starting point, implement the `book_ticket` tool in `agent.py` and integrate them into your agent.
 
 We have created a mini movie showtime database in `agent.py` that you can use to gather information about the movies and help with movie booking requests. When your agent booked a new ticket, make sure to update the `ticket_database` and deduct the ticket price from the user's balance. For any requests that can't be handled by your agent, make a human customer support request by calling the `file_request` tool to add the request to the `request_database`. Your should print the databases whenever you make new updates to them.
 
@@ -108,7 +206,7 @@ Here is an example of what you should expect to see when you run the REPL:
 
 ```text
 user> alright book a ticket for Peter for Star Wars: Episode VI - Return of the Jedi
-Movie Ticket Agent> 
+Movie Ticket Agent>
 Prediction(
     trajectory={'thought_0': 'I need to book a ticket for Peter for the movie "Star Wars: Episode VI - Return of the Jedi".', 'tool_name_0': 'book_ticket', 'tool_args_0': {'user_name': 'Peter', 'movie_title': 'Star Wars: Episode VI - Return of the Jedi'}, 'observation_0': 'Ticket booked successfully for Peter for the movie Star Wars: Episode VI - Return of the Jedi. The ticket number is fmbbto. Your new balance is 24.0.', 'thought_1': 'The ticket has been successfully booked for Peter. I should now check his balance to confirm the new amount after the ticket purchase.', 'tool_name_1': 'find_balance', 'tool_args_1': {'user_name': 'Peter'}, 'observation_1': 24.0, 'thought_2': 'The ticket has been booked and the balance confirmed. The task is now complete.', 'tool_name_2': 'finish', 'tool_args_2': {}, 'observation_2': 'Completed.'},
     reasoning='I successfully booked a ticket for Peter for the movie "Star Wars: Episode VI - Return of the Jedi". The booking was confirmed, and I also checked his balance after the purchase, which is now 24.0.',
@@ -121,7 +219,7 @@ Printing ticket_database:
 
 
 user> can you give me a discount on Star Wars: Episode VI - Return of the Jedi?
-Movie Ticket Agent> 
+Movie Ticket Agent>
 ...
 process_result='I have filed a request for customer support regarding your discount inquiry. The movie "Star Wars: Episode VI - Return of the Jedi" is scheduled for November 15, 2025, at 1:00 PM. You can book tickets through platforms like Fandango, AMC Theatres, or your local cinema\'s website. Additionally, I recommended some similar movies: \n1. Star Wars: Episode IV - A New Hope\n2. Star Wars: Episode V - The Empire Strikes Back\n3. Guardians of the Galaxy\n\nIf you would like to book a ticket for any of these movies or have any other questions, feel free to ask!'
 
@@ -131,9 +229,9 @@ Printing request_database:
 {'3th6rd': Request(user_request='can you give me a discount on Star Wars: Episode VI - Return of the Jedi?', user_name='')}
 ```
 
-### Transcript and Submission for Part 1
+### Testing Your Code for Part 1
 
-Once you have finished the above, generate a transcript of the agent's conversation with the user covering the following user questions:
+Once you have finished the above, you can test your code with the following user questions:
 
 ```text
 - My name is Peter, recommend 3 movies to me.
@@ -141,26 +239,23 @@ Once you have finished the above, generate a transcript of the agent's conversat
 - Give me a plot summary for "Lord of the Rings: The Two Towers"
 - Book a ticket for Peter for Lord of the Rings: The Two Towers
 - print ticket_database
-- Can you give me a discount on Lord of the Rings: The Two Towers?
+- My name is Peter. Can you give me a discount on Lord of the Rings: The Two Towers?
 - print request_database
 ```
 
-Apart from the above transcript, you are also encouraged to add additional user questions that can showcase the use of all the tools you implemented. Make sure that you save the full trajectories of the agent's responses as we showed above in your transcript. Save the transcript as `transcript_part1.txt`.
+You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
 
-## Assignment Part 2: Real-World Extensions (50 points)
+## Part 2: Real-World Extensions (32 points)
 
-So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario. 
+So far, our agent is still quite toy -- it relies on some synthetic user profiles and a fake movie database. Now it's your turn to extend your agent to support more functionalities that would make it useful in a real-world scenario.
 Your task is to implement functions that could support the following functionalities.
-We will outline how you might go about implementing each function, but you are free to implement them in any way you want.
-We will grade your implementation based on the interaction transcript that your agent has with the user.
 
-### Function 1: Web Search (25 points)
+### Function 1: Web Search (8 points)
 
-Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon). 
+Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
-
-There are many search APIs out there that are free for low-volume usage. One example is the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE). Once you get an API key, you can use something like this to call the web search tool:
+You should have already created a SERPAPI key and added it to `api_keys.py`. Once you have an API key, you call the web search tool like the following:
 
 ```python
 from serpapi import GoogleSearch
@@ -174,7 +269,6 @@ params = {
 search = GoogleSearch(params)
 results = search.get_dict()
 ```
-
 
 You can get the list of links from the results dictionary by:
 
@@ -201,25 +295,26 @@ def extract_text(html: str) -> str:
         tag.decompose()
 
     text = soup.get_text(separator=" ", strip=True)
-    return " ".join(text.split())  
+    return " ".join(text.split())
 ```
 
-By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025 ".
+By reading the content of the searched results, the agent should be able to give more accurate and up-to-date information to the user, for example, it should be able to handle a query like "do a web search and then tell me about the upcoming knives out movie in 2025."
 
-### Function 2: Memory (25 points)
+In `agent.py`, we provide a helper function `extract_text` and a `WebTools` class that offers basic functionalities for performing web search by calling the serpapi.
+
+Your job is to add the relevant tools to the enhanced agent class (`EnhancedMovieTicketAgent`). Specicially, you will need to add web search tools if web search is enabled.
+
+To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in **line 62** of `repl.py` before you run `repl.py`.
+
+To receive full credits, you need to demonstrate that the agent can perform web search to access the latest information. Our Gradescope autograder will evaluate this functionality.
+
+### Function 2: Memory (24 points)
 
 You might notice that the current agent is stateless: it doesn't remember past interactions with the user and you have to explain who you are at every interaction.
 Try to implement a memory system so that your agent can remember past interactions with the user and use that memory to personalize the conversation.
 You can assume that within each interaction, the user is the same person.
 
-There are many ways to implement the memory system. For simpliciy, we will briefly outline how you could use an existing agent memory library to integrate it into your Dspy ReAct agent.
-
-We will use a library called [Mem0](https://github.com/mem0ai/mem0). First, install it by running:
-```bash
-pip install mem0ai
-```
-
-You can initialize the memory system by using:
+There are many ways to implement the memory system. We will use a library called [Mem0](https://github.com/mem0ai/mem0). In `agent.py`, we initialize the memory system like the following:
 
 ```python
 from mem0 import Memory
@@ -228,202 +323,93 @@ from mem0 import Memory
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
 # Initialize Mem0 memory system
-config = {
+memory_config = {
     "llm": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "gpt-4o-mini",
+            "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
             "temperature": 0.1
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "together",
         "config": {
-            "model": "text-embedding-3-small"
+            "model": "Alibaba-NLP/gte-modernbert-base"
+        }
+    },
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "embedding_model_dims": 768
         }
     }
 }
 ```
 
-And you can create tools that interact with the memory system by using:
+We provide the starter code for the `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, your job is as follows:
 
-```python
-class MemoryTools:
-    """Tools for interacting with the Mem0 memory system."""
+1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0. You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
 
-    def __init__(self, memory: Memory):
-        self.memory = memory
+2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `get_all_memories` (1 line); `store_memory` (1 line)
 
-    def store_memory(self, content: str, user_id: str = "default_user") -> str:
-        """Store information in memory."""
-        try:
-            self.memory.add(content, user_id=user_id)
-            return f"Stored memory: {content}"
-        except Exception as e:
-            return f"Error storing memory: {str(e)}"
+3. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
 
-    def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
-        """Search for relevant memories."""
-        try:
-            results = self.memory.search(query, user_id=user_id, limit=limit)
-            if not results:
-                return "No relevant memories found."
+To test the agent's memory capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`. After you have implemented both the web search and memory functions, you should end up with an agent that can both handle web searches and remember important user information!
 
-            memory_text = "Relevant memories found:\n"
-            for i, result in enumerate(results["results"]):
-                memory_text += f"{i}. {result['memory']}\n"
-            return memory_text
-        except Exception as e:
-            return f"Error searching memories: {str(e)}"
+Our starter code provides a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
-    def get_all_memories(self, user_id: str = "default_user") -> str:
-        """Get all memories for a user."""
-        try:
-            results = self.memory.get_all(user_id=user_id)
-            if not results:
-                return "No memories found for this user."
+### Testing Your Code for Part 2
 
-            memory_text = "All memories for user:\n"
-            for i, result in enumerate(results["results"]):
-                memory_text += f"{i}. {result['memory']}\n"
-            return memory_text
-        except Exception as e:
-            return f"Error retrieving memories: {str(e)}"
+Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested with hidden tests to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
 
-    def update_memory(self, memory_id: str, new_content: str) -> str:
-        """Update an existing memory."""
-        try:
-            self.memory.update(memory_id, new_content)
-            return f"Updated memory with new content: {new_content}"
-        except Exception as e:
-            return f"Error updating memory: {str(e)}"
-
-    def delete_memory(self, memory_id: str) -> str:
-        """Delete a specific memory."""
-        try:
-            self.memory.delete(memory_id)
-            return "Memory deleted successfully."
-        except Exception as e:
-            return f"Error deleting memory: {str(e)}"
+```text
+1. Please search the web to tell me who played Lucy in "Materialists"
+2. Please search the web to tell me who directed "Wicked: For Good"
+3. Please remember that my favorite movie is "The Matrix"
+4. What is my favorite movie?
+5. Please remember that I watched my first sci-fi movie when I was 6 years old
+6. When did I watch my first sci-fi movie?
 ```
 
-And you can integrate it with our Dspy ReAct agent by using:
+For each prompt, you will be graded on both whether the agent correctly calls the relevant tools, as well as whether the final outputs are correct.
 
-```python
-class MemoryQA(dspy.Signature):
-    """
-    You're a helpful assistant and have access to memory method.
-    Whenever you answer a user's input, remember to store the information in memory
-    so that you can use it later.
-    """
-    user_input: str = dspy.InputField()
-    response: str = dspy.OutputField()
+## EXTRA CREDIT: a new feature of your choice!
 
-class MemoryReActAgent(dspy.Module):
-    """A ReAct agent enhanced with Mem0 memory capabilities."""
+Besides web search and memory, there are many other features that can make the agent even more powerful. To receive extra credit on the assignment, come up with an additional feature and incorporate it in `DSPy`. We encourage you to be creative! We've provided a starter file `extra_credit.py` for you to get started. Your job is to implement the additional feature and record a 5-minute video to walk through your implementation. The agent does not need to be built on top of the movie recommender agent from previous parts, although you can feel free to add the existing tools you've implemented if they are relevant.
+Here are some examples of ideas you could implement:
 
-    def __init__(self, memory: Memory):
-        super().__init__()
-        self.memory_tools = MemoryTools(memory)
+- preference elicitation + explanations: instructs the agent to ask follow-up questions and explain the rationale behind the recommendation in natural language
+- personalization: recommend movies based on any movie the user said they liked in the past
+- error recovery + clarification: when the movie title is ambiguous or doesn't exist in the database, propose alternative candidates and ask for clarification
+- ticket modification/cancellation: add tools to handle ticket rescheduling and cancelling
+- content filtering: group movies by genres and filter out movies outside of the genre
+- spoiler control: avoid providing a summary when the user explicitly states that they do not want spoilers
 
-        # Create tools list for ReAct
-        self.tools = [
-            self.memory_tools.store_memory,
-            self.memory_tools.search_memories,
-            self.memory_tools.get_all_memories,
-            self.get_preferences,
-            self.update_preferences,
-        ]
+To submit the extra credit part of the assignment, you will need to submit a video (under 5 minutes) that covers the following components:
 
-        # Initialize ReAct with our tools
-        self.react = dspy.ReAct(
-            signature=MemoryQA,
-            tools=self.tools,
-            max_iters=6
-        )
+- Feature Overview (1-2 minutes)
+  - What feature you implemented
+  - How it improves the Movie Ticket Agent
+  - What problem it solves
+- Technical Implementation (2-3 minutes)
+  - The new tool(s) you added
+  - Any new data structures or databases
+  - How you integrated it into DSPy ReAct
+  - Any changes to agent.py or new files
+  - You will need to walk us through your code
+- Live Demo in repl.py (1-2 minutes)
+  - run repl.py and demonstrate at least two user interactions
+  - the tool call needs to be successful
+  - show the full trajectory
 
-    def forward(self, user_input: str):
-        """Process user input with memory-aware reasoning."""
+You will submit the 5-minute video to gain credits for the extra credit part of the assignment.
 
-        return self.react(user_input=user_input)
-
-
-    def get_preferences(self, category: str = "general", user_id: str = "default_user") -> str:
-        """Get user preferences for a specific category."""
-        query = f"user preferences {category}"
-        return self.memory_tools.search_memories(
-            query=query,
-            user_id=user_id
-        )
-
-    def update_preferences(self, category: str, preference: str, user_id: str = "default_user") -> str:
-        """Update user preferences."""
-        preference_text = f"User preference for {category}: {preference}"
-        return self.memory_tools.store_memory(
-            preference_text,
-            user_id=user_id
-        )
-```
-
-As a minimal demo of how this memory-augmented agent works, try running the following example:
-
-```python
-import time
-def run_memory_agent_demo():
-    """Demonstration of memory-enhanced ReAct agent."""
-
-    # Configure DSPy
-    lm = dspy.LM(model='openai/gpt-4o-mini')
-    dspy.configure(lm=lm)
-
-    # Initialize memory system
-    memory = Memory.from_config(config)
-
-    # Create our agent
-    agent = MemoryReActAgent(memory)
-
-    # Sample conversation demonstrating memory capabilities
-    print("🧠 Memory-Enhanced ReAct Agent Demo")
-    print("=" * 50)
-
-    conversations = [
-        "Hi, I'm Alice and I love sci-fi movies.",
-        "I'm Alice. My favorite movie is "The Matrix".",
-        "I'm Alice. What do you remember about my preferred movie genre?",
-        "I'm Alice. What is my favorite movie?",
-    ]
-
-    for i, user_input in enumerate(conversations, 1):
-        print(f"\n📝 User: {user_input}")
-
-        try:
-            response = agent(user_input=user_input)
-            print(f"🤖 Agent: {response.response}")
-            time.sleep(1)
-
-        except Exception as e:
-            print(f"❌ Error: {e}")
-
-# Run the demonstration
-if __name__ == "__main__":
-    run_memory_agent_demo()
-```
-
-This is just a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/. 
-After running through this demo, make sure to also integrate all the movie-related tools and the web-search tools from previous parts into your memory-augmented agent to make it fully functional.
-
-
-### Transcript and Submission for Assignment Part 2
-
-Similar to Part 1, include the above example queries as well as additional user questions that can showcase the use of all the tools you implemented. Save the transcript as `transcript_part2.txt`. You should make sure to showcase that the agent is able to remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information.
+# Submitting the Assignment
 
 Submit your assignment via Gradescope. We expect the following files in your final submission:
 
     agent.py
     api_keys.py
-    transcript_part1.txt
-    transcript_part2.txt
-    * any auxiliary code files you created for Part 2
-    
-**We will use your API key to run the autograder on your submission alone. It is important that you make sure there is at least $0.1 left in your account.**  If you would like to work out an alternative accomodation please make a private Ed post.
+    * any auxiliary code files you created for Part 2 and the video
 
+**As mentioned above, we will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment. Make sure to include your key in `api_keys.py` and submit `api_keys.py` as a part of your assignment.** Please make sure that in your SerpAPI account, you have more than 5 searches left. You can check how many searches you have in your account on the SerpAPI dashboard.

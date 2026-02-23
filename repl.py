@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)
 
 from util import load_together_client, stream_llm_to_console, DEFAULT_STOP
-from agent import react_agent
+from agent import react_agent, enhanced_agent
 from agent import user_database, showtime_database, ticket_database, request_database  
 
 import pprint
@@ -59,7 +59,7 @@ class REPL(cmd.Cmd):
     def __init__(self, llm_programming=False, llm_prompting=False):
         super().__init__()
 
-        self.agent = react_agent
+        self.agent = react_agent # TODO: replace with enhanced_agent to test the enhanced agent
         self.name = "Movie Ticket Agent"
         self.bot_prompt = '\001\033[96m\002%s> \001\033[0m\002' % self.name
         self.intro = '\n' + self.bot_prompt + \
@@ -114,7 +114,7 @@ class REPL(cmd.Cmd):
             else:
                 print(f"Unknown database: {dbname}")
         else:
-            response = react_agent(user_request=line)
+            response = self.agent(user_request=line) 
             print(response)
 
 
