@@ -110,7 +110,7 @@ All the code that you will need to write for the base assignment will be in `age
   - [Function 2: Memory](#function-2-memory-24-points)
   - [Testing Your Code for Part 2](#testing-your-code-for-part-2)
 
-- [Part 3: Reflection](#part-3-reflection-6-points)
+- [Part 3: Reflection](#part-3-reflection-7-points)
 
 - [EXTRA CREDIT: a new feature of your choice!](#extra-credit-a-new-feature-of-your-choice)
 
@@ -396,7 +396,7 @@ Our starter code provides a minimal demo to illustrate the memory capabilities o
 
 ### Testing Your Code for Part 2
 
-Recall: To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in **line 62** of `repl.py` before you run `repl.py`.
+Once again, to test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in **line 62** of `repl.py` before you run `repl.py`.
 
 Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. As noted in Part 1, LLM outputs can be non-deterministic and occasionally truncated due to token limits. Don’t worry if this happens—we’ll take it into account during grading.
 
@@ -411,7 +411,7 @@ Similar to Part 1, you can use the example queries below as well as additional u
 
 For each prompt, you will be graded on both whether the agent correctly calls the relevant tools, as well as whether the final outputs are correct.
 
-## Part 3: Reflection (6 points)
+## Part 3: Reflection (7 points)
 
 For this part of the assignment, please answer the reflection questions in the Gradescope assignment titled "PA7 - Reflection".
 
@@ -453,6 +453,7 @@ Note that there are three Gradescope assignments for PA7 (see below). For each a
     ```
     agent.py
     api_keys.py
+    extra_credit.py (if your group is attempting the extra credit)
     * any auxiliary code files you created for Part 2 and extra credit
     ```
 - **PA7 - Reflection:** You should answer the short answer questions
