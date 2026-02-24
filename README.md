@@ -451,9 +451,9 @@ Note that there are three Gradescope assignments for PA7 (see below). For each a
     ```
     agent.py
     api_keys.py
-    extra_credit.py (if your group is attempting the extra credit)
-    * any auxiliary code files you created for Part 2 and extra credit
+    extra_credit.py
     ```
+    You can generate the submission zip by running `bash create_assignment_zip.sh` in the terminal.
 - **PA7 - Reflection:** You should answer the short answer questions
 - **PA7 - Extra Credit:** You should submit your 5-minute video here if your group is attempting the extra credit. Please submit a link to your video. If you wish to submit a Google Drive link, please make sure that the link has viewing permissions.
 
