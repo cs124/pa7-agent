@@ -256,7 +256,8 @@ class MovieTicketAgent(dspy.Signature):
     # In DSPy, the docstring of a Signature acts as the system prompt 
     # for the language model. It defines the agent’s role, constraints, 
     # and decision-making strategy. So it is crucial to define it well!
-    # Hint: you can add details about what tools the agent will need to call in order to successfully complete the tasks
+    # Hint: you can add details about what tools the agent will need to call 
+    # in order to successfully complete the tasks
     ########################################################################
     """
     You are a movie ticket agent that helps user book and manage movie tickets. You are given a list of tools to handle user request, and you should decide the right tool to use in order to
@@ -425,18 +426,27 @@ class MemoryTools:
             str: A confirmation message or an error message.
         """
         try:
+            ########################################################################
             # TODO: add the content to Mem0's memory store for user_id
+            ########################################################################
+
+            ########################################################################
+            #                          END OF YOUR CODE                            #
+            ########################################################################
             return f"Stored memory: {content}"
         except Exception as e:
             return f"Error storing memory: {str(e)}"
 
     def create_memory(self, results):
         """
-        Helper function that creates the memory_text string containing all of the memories. You will call this function
+        Helper function that creates a memory_text string containing all of the memories. You will call this function
         in search_memories and get_all_memories().
         This function should return memory_text
         """
-        # TODO
+        memory_text = "Relevant memories found:\n"
+        for i, result in enumerate(results["results"]):
+            memory_text += f"{i}. {result['memory']}\n"
+        return memory_text
 
     def search_memories(self, query: str, user_id: str = "default_user", limit: int = 5) -> str:
         """
@@ -466,8 +476,7 @@ class MemoryTools:
             ########################################################################
             if not results:
                 return "No relevant memories found."
-
-            memory_text = create_memory(results)
+            memory_text = self.create_memory(results)
             return memory_text
         except Exception as e:
             return f"Error searching memories: {str(e)}"
@@ -475,11 +484,11 @@ class MemoryTools:
     def get_all_memories(self, user_id: str = "default_user") -> str:
         """Get all memories for a user."""
         try:
-            # TODO: get all memories for a given user_id
+            results = self.memory.get_all(user_id=user_id)
             if not results:
                 return "No memories found for this user."
 
-            memory_text = create_memory(results)
+            memory_text = self.create_memory(results)
             return memory_text
         except Exception as e:
             return f"Error retrieving memories: {str(e)}"
@@ -487,7 +496,13 @@ class MemoryTools:
     def update_memory(self, memory_id: str, new_content: str) -> str:
         """Update an existing memory."""
         try:
+            ########################################################################
             # TODO: Replace the old memory content with the new content
+            ########################################################################
+
+            ########################################################################
+            #                          END OF YOUR CODE                            #
+            ########################################################################
             return f"Updated memory with new content: {new_content}"
         except Exception as e:
             return f"Error updating memory: {str(e)}"
@@ -495,7 +510,13 @@ class MemoryTools:
     def delete_memory(self, memory_id: str) -> str:
         """Delete a specific memory."""
         try:
+            ########################################################################
             # TODO: delete the memory for a given memory_id
+            ########################################################################
+
+            ########################################################################
+            #                          END OF YOUR CODE                            #
+            ########################################################################
             return "Memory deleted successfully."
         except Exception as e:
             return f"Error deleting memory: {str(e)}"

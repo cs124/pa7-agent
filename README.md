@@ -127,7 +127,7 @@ One of the core functions that your agent has to support is recommending movies 
 
 We have included a movie ratings matrix in `data/ratings.txt`. `data/ratings.txt` is structured such that each line is a user percentage, movie percentage, and the rating. The provided code loads it using the `util.load_ratings` function (note that the matrix has already been loaded in and stored in `ratings_matrix` (see line 21). In this matrix, each row represents a movie, and each column represents a user). Moreover, we have populated some synthetic user profiles in `synthetic_users.py` (which you should not modify because our test cases rely on them). The `recommend_movies` function takes in the user name and the number of movies to recommend, and returns a list of movie titles to recommend based on collaborative filtering. You should implement item-item collaborative filtering with cosine similarity **with no mean-centering or normalization of scores**.
 
-Here is an example of what you should expect to see when you run the REPL:
+Here is an example of what you should expect to see when you run the REPL after part 1 is fully implemented:
 
 ```python
 recommend_movies("Peter", 3)
@@ -160,7 +160,7 @@ python test_functions.py --function recommend_movies
 
 ### Integrating Tools into an LLM Agent (27 points)
 
-Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the `DSPy` library to build our agent to make tool calling easier. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the `recommend_movies` tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call `file_request` if the existing functions cannot handle the request.
+Now that we have built a `recommend_movies` function, we can integrate it into an LLM agent so that it can make tool calls to the `recommend_movies` function. We will use the `DSPy` library to build an agent that can make tool calls. For each user query, the agent will first reason and determine which tools in the tool list are relevant, then call each tool (e.g. the `recommend_movies` tool) to complete each sub-component of the task. The ability to call the necessary tools for each task is essential for the agent. For example, it would need to call `file_request` if the existing functions cannot handle the request.
 
 We have provided a `MovieTicketAgent` class in `agent.py` that you can use as a starting point. We have also provided a `general_qa` function that you can use to answer general questions about the movie ticket agent.
 
@@ -180,7 +180,7 @@ react_agent = dspy.ReAct(
 )
 ```
 
-#### Note on `DSPy` agent response object
+#### Note on `DSPy` Agent Response
 
 You can then run the REPL script to see your agent in action: `python repl.py`.
 
@@ -266,7 +266,7 @@ Printing request_database:
 
 ### Testing Your Code for Part 1
 
-Once you have finished the above, you can test your code with the following user questions:
+Once you have finished the above, you can test your code with the following user questions. Also see more info about our grading and rubrics [here](#autograding-vs-llm-grading-vs-manual-grading).
 
 ```text
 - My name is Peter, recommend 3 movies to me.
@@ -281,7 +281,7 @@ Once you have finished the above, you can test your code with the following user
 
 ### Note on testing and agent nondeterminism
 
-You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
+You can examine the trajectory to see if the agent is calling the correct tools for each task. You are also encouraged to test with additional user questions that can showcase the use of all the tools you implemented. We also recognize that because LLM-based systems are not deterministic, your agent may occasionally behave unexpectedly, even if it generally works correctly. Do your best to pass all tests; if unexpected behavior occurs during grading, we will review the results and your code to identify any unjustified point removals. There is a token limit for the agent's outputs, so it is possible that the response is cut-off -- do not be concerned if it gets cut-off as we will take it into consideration when grading the responses.
 
 ## Part 2: Real-World Extensions (32 points)
 
@@ -290,7 +290,7 @@ Your task is to implement functions that could support the following functionali
 
 ### Function 1: Web Search (8 points)
 
-Often times our LLMs don't know the latest information (say you want to know about a new movie that's coming out soon).
+Often times our LLMs don't know the latest information (say you want to know about a new movie that's releasing soon).
 To overcome this, we want to integrate web search (through a search API) so that your agent can browse the latest information. Generally we can break this down into several steps: calling the web search tool, parsing the results, and using the results to answer the user's question.
 
 The agent's web search tool (which is mostly implemented for you in `agent.py`) looks like the following:
@@ -318,7 +318,7 @@ links = [
 ]
 ```
 
-Once you get a link, you can read its content with tools like BeautifulSoup:
+Once you get a link, we read its content with tools like `BeautifulSoup`in the provided code:
 
 ```python
 from bs4 import BeautifulSoup
@@ -386,7 +386,7 @@ We provide the starter code for the `MemoryTools` class, which includes function
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0. You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
 
-2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `get_all_memories` (1 line); `store_memory` (1 line)
+2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `store_memory` (1 line)
 
 3. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
 
@@ -395,6 +395,8 @@ To test the agent's memory capabilities, replace `react_agent` with `enhanced_ag
 Our starter code provides a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
 ### Testing Your Code for Part 2
+
+Recall: To test the agent's search capabilities, replace `react_agent` with `enhanced_agent` in **line 62** of `repl.py` before you run `repl.py`.
 
 Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. As noted in Part 1, LLM outputs can be non-deterministic and occasionally truncated due to token limits. Don’t worry if this happens—we’ll take it into account during grading.
 
