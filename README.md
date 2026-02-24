@@ -384,7 +384,7 @@ memory_config = {
 
 We provide the starter code for the `MemoryTools` class, which includes functions that store, search, fetch, and update memories. Now, your job is as follows:
 
-1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0. You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
+1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation [here](https://github.com/mem0ai/mem0) (the function `chat_with_memories` might be helpful). You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
 
 2. Finish implementing `update_memory` (1 line), `delete_memory` (1 line), and `store_memory` (1 line). The [mem0 memory operations documentation](https://docs.mem0.ai/core-concepts/memory-operations) will come in handy.
 
