@@ -431,7 +431,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-
+            pass
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -468,7 +468,7 @@ class MemoryTools:
         """
         try:
             ########################################################################
-            # TODO: search for relevant memories.
+            # TODO: search for relevant memories and store them in results
             # Hint: it would be helpful to read the documentation of 
             # mem0 to see how to use the `search` method: https://github.com/mem0ai/mem0
             ########################################################################
@@ -503,7 +503,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-
+            pass
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -519,7 +519,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-
+            pass
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -578,8 +578,10 @@ class EnhancedMovieTicketAgent(dspy.Module):
             self.memory_tools = None
         
         ########################################################################
-        # TODO: Add tools for web search and memory if they are enabled        #
+        # TODO: Add tools for the base agent, as well as web search and memory 
+        # if they are enabled
         ########################################################################
+        # TODO: Add tools for the base agent
         self.tools = []
 
         # enable web search

@@ -3,3 +3,4 @@ __pycache__/
 transcript1.txt
 transcript2.txt
 agent_solution.py
+*.zip
