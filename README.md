@@ -100,7 +100,7 @@ All the code that you will need to write for the base assignment will be in `age
 - [Part 1: Basic Tool-Use Agent](#part-1-basic-tool-use-agent-68-points)
   - [First Tool: Recommend Movies via Collaborative Filtering](#first-tool-recommend-movies-via-collaborative-filtering-21-points)
   - [Integrating Tools into an LLM Agent](#integrating-tools-into-an-llm-agent-27-points)
-    - [Note on DSPy agent response object](#note-on-dspy-agent-response-object)
+    - [Note on DSPy Agent Response](#note-on-dspy-agent-response)
   - [Interfacing with Databases](#interfacing-with-databases-20-points)
   - [Testing Your Code for Part 1](#testing-your-code-for-part-1)
   - [Note on testing and agent nondeterminism](#note-on-testing-and-agent-nondeterminism)
@@ -120,6 +120,10 @@ All the code that you will need to write for the base assignment will be in `age
 - [Links to resources](#links-to-resources)
 
 ## Part 1: Basic Tool-Use Agent (68 points)
+
+### Warm up
+
+Write a message with which your agent greets the user in the `greeting` function!
 
 ### First Tool: Recommend Movies via Collaborative Filtering (21 points)
 
@@ -471,3 +475,4 @@ The python autograder will test and grade each function in the [rubric](https://
 
 * Rubric: https://docs.google.com/spreadsheets/d/1tYNSIUtir-gX2Q3sRqZaFc3ufVWdZbpRoUr1Lu_hIJI/edit?gid=1408405358#gid=1408405358
 * How the Autograder Works: https://docs.google.com/document/d/1LLEhSCbJ0y9mEi909QXMB7rQJr2eymk37Ts_DCiJUnI/edit?tab=t.0#heading=h.amfavasmxpg7
+
