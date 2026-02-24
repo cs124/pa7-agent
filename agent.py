@@ -428,6 +428,8 @@ class MemoryTools:
         try:
             ########################################################################
             # TODO: add the content to Mem0's memory store for user_id
+            # Hint: It may be helpful to review mem0's memory operations here:
+            # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
 
             ########################################################################
@@ -498,6 +500,8 @@ class MemoryTools:
         try:
             ########################################################################
             # TODO: Replace the old memory content with the new content
+            # Hint: It may be helpful to review mem0's memory operations here:
+            # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
 
             ########################################################################
@@ -512,6 +516,8 @@ class MemoryTools:
         try:
             ########################################################################
             # TODO: delete the memory for a given memory_id
+            # Hint: It may be helpful to review mem0's memory operations here:
+            # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
 
             ########################################################################

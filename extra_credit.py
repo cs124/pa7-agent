@@ -14,7 +14,6 @@ You have complete freedom to:
 - Design the interface and interaction pattern
 
 Some ideas to get you started:
-- A memory-enhanced conversational agent
 - A research assistant that uses web search
 - A creative writing collaborator with style adaptation
 - A data analysis agent that processes files

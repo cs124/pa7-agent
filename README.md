@@ -386,13 +386,11 @@ We provide the starter code for the `MemoryTools` class, which includes function
 
 1. Finish writing the `search_memories` function. Specifically, define results by searching for the relevant memory. Please read the documentation here (the function `chat_with_memories` might be helpful): https://github.com/mem0ai/mem0. You will need to use a helper function `create_memory`, which will be called in `search_memories` and `get_all_memories`.
 
-2. Finish implementing `update_memory` (1 line); `delete_memory` (1 line); `store_memory` (1 line)
+2. Finish implementing `update_memory` (1 line), `delete_memory` (1 line), and `store_memory` (1 line). The [mem0 memory operations documentation](https://docs.mem0.ai/core-concepts/memory-operations) will come in handy.
 
 3. Now that we have a `MemoryTools` class working, we can integrate it with our `DSPy ReAct` agent in `EnhancedMovieTicket` Agent. Your job is to add the relevant tools to the agent so that the agent can call the tools when needed.
 
 To test the agent's memory capabilities, replace `react_agent` with `enhanced_agent` in `repl.py` before you run `repl.py`. After you have implemented both the web search and memory functions, you should end up with an agent that can both handle web searches and remember important user information!
-
-Our starter code provides a minimal demo to illustrate the memory capabilities of the agent, for more details, you can refer to this tutorial: https://dspy.ai/tutorials/mem0_react_agent/.
 
 ### Testing Your Code for Part 2
 
