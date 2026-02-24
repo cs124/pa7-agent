@@ -557,7 +557,7 @@ class EnhancedMovieTicketAgent(dspy.Module):
 
         # enable web search
         if self.web_tools: 
-            # TODO: add web search tool to self.tools
+            # TODO: add web search tool to self.tools and delete `pass`
             pass
         
         # add memory tools if enabled
