@@ -392,13 +392,13 @@ memory_config = {
     "embedder": {
         "provider": "together",
         "config": {
-            "model": "Alibaba-NLP/gte-modernbert-base"
+            "model": "intfloat/multilingual-e5-large-instruct"
         }
     },
     "vector_store": {
         "provider": "qdrant",
         "config": {
-            "embedding_model_dims": 768
+            "embedding_model_dims": 1024
         }
     }
 }
