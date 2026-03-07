@@ -404,8 +404,8 @@ Once again, to test the agent's search capabilities, replace `react_agent` with 
 Similar to Part 1, you can use the example queries below as well as additional user questions that can showcase the use of all the tools you implemented to test your code. Your code will be tested to ensure that your agent can remember past interactions with the user and use that memory to personalize the conversation, and that it can make tool calls to the web search tool and answer questions based on the latest information. As noted in Part 1, LLM outputs can be non-deterministic and occasionally truncated due to token limits. Don’t worry if this happens—we’ll take it into account during grading.
 
 ```text
-- Please search the web to tell me who played Lucy in "Materialists"
-- Please search the web to tell me who directed "Wicked: For Good"
+- Who played Lucy in "Materialists"?
+- Who directed "Wicked: For Good"?
 - Please remember that my favorite movie is "The Matrix"
 - What is my favorite movie?
 - Please remember that I watched my first sci-fi movie when I was 6 years old
@@ -476,6 +476,7 @@ The python autograder will test and grade each function in the [rubric](https://
 
 * Rubric: https://docs.google.com/spreadsheets/d/1tYNSIUtir-gX2Q3sRqZaFc3ufVWdZbpRoUr1Lu_hIJI/edit?gid=1408405358#gid=1408405358
 * How the Autograder Works: https://docs.google.com/document/d/1LLEhSCbJ0y9mEi909QXMB7rQJr2eymk37Ts_DCiJUnI/edit?tab=t.0#heading=h.amfavasmxpg7
+
 
 
 
